@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author mleral
  */
 public abstract class Action {
-    Service s;
+    protected Service s;
     public abstract void run(HttpServletRequest req);
     
 }

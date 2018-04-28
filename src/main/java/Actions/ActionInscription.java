@@ -7,6 +7,8 @@ package Actions;
 
 import static com.oracle.jrockit.jfr.ContentType.Address;
 import fr.insalyon.dasi.entities.Address;
+import fr.insalyon.dasi.entities.Client;
+import fr.insalyon.dasi.entities.Person;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,31 +21,41 @@ import javax.servlet.http.HttpServletRequest;
  * @author mleral
  */
 public class ActionInscription extends Action {
-        @Override
-        public void run(HttpServletRequest req){
-                boolean res=false;
-                
-                String honorific = req.getParameter("honorific");
-                String prenom = req.getParameter("firstName");
-                String nom = req.getParameter("lastName");
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                
-            try {
-                Date d = sdf.parse(req.getParameter("birthdate"));
-            } catch (ParseException ex) {
-                Logger.getLogger(ActionInscription.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-                String num = req.getParameter("phonenumber");
-                String email = req.getParameter("email");
-                //Address A = req.getParameter("address");
-                
-                req.setAttribute("Resultat", res);
-                    //mettre 
-                    // https://www.tutorialspoint.com/servlets/servlets-form-data.htm
-                    
-            
-            
-            //s.register();
+
+    @Override
+    public void run(HttpServletRequest req) {
+        boolean res = false;
+
+        String honorific = req.getParameter("honorific");
+        String prenom = req.getParameter("firstName");
+        String nom = req.getParameter("lastName");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date dateNaissance = new Date();
+        try {
+            dateNaissance = sdf.parse(req.getParameter("birthdate"));
+        } catch (ParseException ex) {
+            Logger.getLogger(ActionInscription.class.getName()).log(Level.SEVERE, null, ex);
         }
+        String num = req.getParameter("phonenumber");
+        String email = req.getParameter("email");
+        // password ????
+        String password = req.getParameter("passwordHash");
+        char[] mdp = password.toCharArray();
+        
+        String adresse1 = req.getParameter("address1");
+        String adresse2 = req.getParameter("address2");
+        String zipCode = req.getParameter("zipCode");
+        String ville = req.getParameter("city");
+        String pays = req.getParameter("country");
+        
+        Address adresse = new Address(adresse1,adresse2,zipCode,ville,pays);
+        Person p = new Client(honorific, prenom, nom, dateNaissance, num, email,adresse);
+        s.register(p, mdp);
+
+        req.setAttribute("Resultat", res);
+        //mettre 
+        // https://www.tutorialspoint.com/servlets/servlets-form-data.htm
+
+        //s.register();
+    }
 }

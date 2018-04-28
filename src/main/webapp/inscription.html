@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <!-- En-tête : title, meta, ... -->
+        <title>TD_DASI-Test</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        
+        <!-- Contenu: h1, ul+li, a href, ... -->
+        <h1>Inscription</h1>
+        <form action="inscription">
+            <fieldset>
+                <legend>Inscription:</legend>
+                Nom:   
+                <input type="text" name="firstname" value="Mickey"><br>
+                Prenom:   
+                <input type="text" name="lastname" value="Mouse"><br><br>
+                <input type="submit" value="Submit">
+            </fieldset>
+        </form>
+         
+         
+        <a href="index.html">Retour à l'Accueil</a>
+        <script>
+//            function ajouter(personne) {
+//                $('#liste-personnes').append('<li>'+personne.civilite+" "+personne.prenom
+//                    +' <a href='+"'detail.html?id="+personne.id+"'"+">" +personne.nom+"</a> ("+personne.mail+" )."+ '</li>');
+//                
+//        // fonction à compléter
+//            }
+            $(document).ready(function () {
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    
+                    data: {
+                        action: 'inscription'
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    
+//                    $('#liste-personnes').empty();
+//                    var personnes = data.personnes;
+//                    for (var i = 0; i < personnes.length; i++) {
+//                        ajouter(data.personnes[i]);
+//                    }
+                });
+            });
+        </script>
+    </body>
+</html>
