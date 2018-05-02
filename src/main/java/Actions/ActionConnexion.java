@@ -16,11 +16,8 @@ public class ActionConnexion extends Action {
         public void run(HttpServletRequest req){
                 String mail = req.getParameter("login");
                 String mdp = req.getParameter("password");
-                                    //mettre 
-                    // https://www.tutorialspoint.com/servlets/servlets-form-data.htm
-                    
-            
-            
+                System.out.println("mail : " + mail);
+                System.out.println("mdp : " + mdp);
             //s.register();
         }
 }

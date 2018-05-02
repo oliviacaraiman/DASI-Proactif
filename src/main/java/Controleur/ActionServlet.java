@@ -1,22 +1,11 @@
-package Controleur;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package Controleur;
 
-
-import Actions.Action;
-import Actions.ActionAfficherInterventionClient;
-import Actions.ActionAfficherInterventionEmploye;
-import Actions.ActionConnexion;
-import Actions.ActionEnvoyerDemande;
-import Actions.ActionFillAtestation;
-import Actions.ActionInscription;
-import Actions.ActionInterventionJour;
-import Actions.ActionInterventionsFinie;
-import Actions.ActionReinitialisation;
+import Actions.*;
 import fr.insalyon.dasi.dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,7 +14,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -45,32 +33,30 @@ public class ActionServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession(true);
-        request.setCharacterEncoding("UTF-8");
-        
-        //        try (PrintWriter out = response.getWriter()) {
-//         
-//            out.println("<!DOCTYPE html>");
-//            out.println("<html>");
-//            out.println("<head>");
-//            out.println("<title>Servlet ActionServlet</title>");            
-//            out.println("</head>");
-//            out.println("<body>");
-//            out.println("<h1>Servlet ActionServlet at " + request.getContextPath() + "</h1>");
-//            out.println("</body>");
-//            out.println("</html>");
-//        }
-         
-         String choix = request.getParameter("action");
-         System.out.println("Dans controleur -> OK " + choix);
+        response.setContentType("text/html;charset=UTF-8");
+       // PrintWriter out;
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ActionServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ActionServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+
+        try {   
+        String choix = request.getParameter("action");
+       
+        System.out.println("Dans controleur -> OK " + choix);
         switch(choix){
             case "inscription" : {
                 System.out.println("Dans inscription -> OK");
                 Action action = new ActionInscription();
                 action.run(request);
                 response.setContentType("text/html;charset=UTF-8");
-                PrintWriter out=response.getWriter();
                 out.println("success");
                 //Serialize(request); => resp
                 //appel classe serialization pour mettre reponse en forme
@@ -80,9 +66,9 @@ public class ActionServlet extends HttpServlet {
             case "connexion" : {
                 System.out.println("Dans connexion -> OK");
                 Action action = new ActionConnexion();
-                //action.run(request);
+                action.run(request);
                 response.setContentType("text/html;charset=UTF-8");
-                PrintWriter out=response.getWriter();
+                //out = response.getWriter();
                 out.println("success");
                 break;
             }
@@ -129,10 +115,14 @@ public class ActionServlet extends HttpServlet {
 //                break;
 //            }
         
+           }
+        }
+         catch (Exception e) {}
         }
     }
-    
-        /**
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
@@ -159,8 +149,8 @@ public class ActionServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
-    
-        /**
+
+    /**
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description
@@ -169,16 +159,17 @@ public class ActionServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
+
     @Override
-    public void init() throws ServletException{
-        super.init();
+    public void init() throws ServletException {
+        super.init(); //To change body of generated methods, choose Tools | Templates.
         JpaUtil.init();
     }
+
     @Override
-    public void destroy(){
+    public void destroy() {
+        super.destroy(); //To change body of generated methods, choose Tools | Templates.
         JpaUtil.destroy();
-        super.destroy();
     }
 
 }

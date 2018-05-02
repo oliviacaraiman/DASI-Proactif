@@ -25,7 +25,7 @@ public class ActionInscription extends Action {
     @Override
     public void run(HttpServletRequest req) {
         boolean res = false;
-        System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOKKKKKKKKKKKKKKKKKKKKKKKKK");
+        System.out.println("Ds ActionInscription");
         String honorific = req.getParameter("honorific");
         String prenom = req.getParameter("firstName");
         String nom = req.getParameter("lastName");
@@ -51,11 +51,7 @@ public class ActionInscription extends Action {
         Address adresse = new Address(adresse1,adresse2,zipCode,ville,pays);
         Person p = new Client(honorific, prenom, nom, dateNaissance, num, email,adresse);
         s.register(p, mdp);
-
         req.setAttribute("Resultat", res);
-        //mettre 
-        // https://www.tutorialspoint.com/servlets/servlets-form-data.htm
-
-        //s.register();
+        
     }
 }

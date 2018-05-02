@@ -28,18 +28,19 @@
                         login: champLogin,
                         password: champPassword
                     },
-                    dataType: 'json'
+                    
+                    dataType: 'text'
                 }).done(function (data) {
-                     
+                     // dataType 
                     // ici votre code...
                     var resp = data;
                     if(resp.status == 'success'){
                         window.location.href = "./maPageSuivante.html";
                     }
                     // si connexion ok, aller sur la page suivante :
-                   // window.location = "maPageSuivante.html";
+                    window.location = "./maPageSuivante.html";
                     // si connexion pas ok afficher un texte dans la div message :
-                    $('#message').html('Echec de la connexion');
+                 //   $('#message').html('Echec de la connexion');
                 }).fail(function() {
          
                    $('#message').html('Echec de la connexion');
