@@ -25,7 +25,7 @@ public class ActionInscription extends Action {
     @Override
     public void run(HttpServletRequest req) {
         boolean res = false;
-
+        System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOKKKKKKKKKKKKKKKKKKKKKKKKK");
         String honorific = req.getParameter("honorific");
         String prenom = req.getParameter("firstName");
         String nom = req.getParameter("lastName");
@@ -39,7 +39,7 @@ public class ActionInscription extends Action {
         String num = req.getParameter("phonenumber");
         String email = req.getParameter("email");
         // password ????
-        String password = req.getParameter("passwordHash");
+        String password = req.getParameter("password");
         char[] mdp = password.toCharArray();
         
         String adresse1 = req.getParameter("address1");

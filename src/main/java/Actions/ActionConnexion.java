@@ -14,8 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 public class ActionConnexion extends Action {
         @Override
         public void run(HttpServletRequest req){
-                String nom = req.getParameter("prenom");
-                    //mettre 
+                String mail = req.getParameter("login");
+                String mdp = req.getParameter("password");
+                                    //mettre 
                     // https://www.tutorialspoint.com/servlets/servlets-form-data.htm
                     
             
