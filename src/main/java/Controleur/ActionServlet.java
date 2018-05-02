@@ -6,7 +6,12 @@
 package Controleur;
 
 import Actions.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import fr.insalyon.dasi.dao.JpaUtil;
+import fr.insalyon.dasi.entities.Person;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -14,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -33,19 +39,12 @@ public class ActionServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
+        response.setContentType("application/json ;charset=UTF-8");
        // PrintWriter out;
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ActionServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ActionServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+     
 
         try {   
         String choix = request.getParameter("action");
@@ -56,8 +55,9 @@ public class ActionServlet extends HttpServlet {
                 System.out.println("Dans inscription -> OK");
                 Action action = new ActionInscription();
                 action.run(request);
-                response.setContentType("text/html;charset=UTF-8");
-                out.println("success");
+                gsonCoverter(out, (Person) session.getAttribute("utilisateur"));
+                out.close();
+                //out.println("success");
                 //Serialize(request); => resp
                 //appel classe serialization pour mettre reponse en forme
                 
@@ -121,6 +121,19 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
+    public void gsonCoverter(PrintWriter out, Person p){
+        System.out.println("DS GSON: "+ p.getFirstName());
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        //JsonArray jsonAttributs = new JsonArray();
+        JsonObject jsonPersonne = new JsonObject();
+        jsonPersonne.addProperty("civilite", p.getHonorific());
+        jsonPersonne.addProperty("nom",p.getFirstName());
+        jsonPersonne.addProperty("prenom",p.getLastName());
+        JsonObject container = new JsonObject();
+        container.add("utilisateur",jsonPersonne);
+        out.print(gson.toJson(container));
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

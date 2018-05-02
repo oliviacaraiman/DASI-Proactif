@@ -10,7 +10,7 @@
         <h1>Formulaire d'inscription</h1>
                 Civilite:
                 <form>
-                    <select name="civilite">
+                    <select name="civilite" id="civilite">
                         <option>Monsieur
                         <option>Madame
                     </select>
@@ -46,7 +46,7 @@
             function inscription() {
                
                // var champLogin = $('#champ-login').val();
-               // var champPassword = $('#champ-password').val();
+                var champHonorific = $('#civilite').val();
                 var champPrenom = $('#champ-prenom').val();
                 var champNom = $('#champ-nom').val();
                 var champDateNaissance = $('#champ-date').val();
@@ -65,7 +65,7 @@
                     method: 'POST',
                     data: {
                         action: 'inscription',
-                        //civilite: 
+                        civilite: champHonorific,
                         firstName: champPrenom,
                         lastName: champNom,
                         birthdate: champDateNaissance,
@@ -83,9 +83,16 @@
                     // ici votre code...
                     // 
                     // si connexion ok, aller sur la page suivante :
-                    window.location = "maPageSuivante.html";
+                    var personne = data.utilisateur;
+                    $('#message').html('Bonjour');
+        
+                    
+                    //window.location = "maPageSuivante.html";
                     // si connexion pas ok afficher un texte dans la div message :
-                    $('#message').html('Echec de la connexion');
+                    //$('#message').html('Echec de la connexion');
+                }).fail(function() {
+         
+                   $('#message').html('Echec de la connexion');
                 });
             }
 
