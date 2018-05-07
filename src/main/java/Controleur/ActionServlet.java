@@ -6,6 +6,7 @@
 package Controleur;
 
 import Actions.*;
+import Serialization.JsonConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -40,6 +41,8 @@ public class ActionServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        JsonConverter converter = new JsonConverter();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         response.setContentType("application/json ;charset=UTF-8");
        // PrintWriter out;
         try (PrintWriter out = response.getWriter()) {
@@ -48,28 +51,33 @@ public class ActionServlet extends HttpServlet {
 
         try {   
         String choix = request.getParameter("action");
-       
-        System.out.println("Dans controleur -> OK " + choix);
+        JsonObject status = new JsonObject();
         switch(choix){
             case "inscription" : {
-                System.out.println("Dans inscription -> OK");
                 Action action = new ActionInscription();
                 action.run(request);
-                gsonCoverter(out, (Person) session.getAttribute("utilisateur"));
+                status.addProperty("status", (String) request.getAttribute("status"));
+//          gsonCoverter(out, (Person) session.getAttribute("utilisateur"));
+                JsonObject container = new JsonObject();
+                //container.add("utilisateur",gsonCoverter((Person) session.getAttribute("utilisateur")));
+                container.add("status",status);
+                out.println(gson.toJson(container));
                 out.close();
-                //out.println("success");
-                //Serialize(request); => resp
-                //appel classe serialization pour mettre reponse en forme
-                
                 break;
             }
             case "connexion" : {
-                System.out.println("Dans connexion -> OK");
                 Action action = new ActionConnexion();
                 action.run(request);
-                response.setContentType("text/html;charset=UTF-8");
+                JsonObject container = new JsonObject();
+                String stat = (String) request.getAttribute("status");
+                status.addProperty("status", stat);
+                if (stat.equals("succes")) {
+                    container.add("utilisateur",converter.personToJson((Person) session.getAttribute("utilisateur")));
+                }
+                container.add("status",status);
+                out.println(gson.toJson(container));
+                out.close();
                 //out = response.getWriter();
-                out.println("success");
                 break;
             }
 //           case "reinitialisation" : {
@@ -119,19 +127,6 @@ public class ActionServlet extends HttpServlet {
         }
          catch (Exception e) {}
         }
-    }
-
-    public void gsonCoverter(PrintWriter out, Person p){
-        System.out.println("DS GSON: "+ p.getFirstName());
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        //JsonArray jsonAttributs = new JsonArray();
-        JsonObject jsonPersonne = new JsonObject();
-        jsonPersonne.addProperty("civilite", p.getHonorific());
-        jsonPersonne.addProperty("nom",p.getFirstName());
-        jsonPersonne.addProperty("prenom",p.getLastName());
-        JsonObject container = new JsonObject();
-        container.add("utilisateur",jsonPersonne);
-        out.print(gson.toJson(container));
     }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

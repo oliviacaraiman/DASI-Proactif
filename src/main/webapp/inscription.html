@@ -39,6 +39,7 @@
                 <input type="text" name="pays" id="champ-pays"><br><br>
      
         <button id="bouton-inscription">S'inscrire</button>   
+        <a href="index.html">Accueil</a>
         <div id="message"></div>
         
         <script>
@@ -83,16 +84,28 @@
                     // ici votre code...
                     // 
                     // si connexion ok, aller sur la page suivante :
-                    var personne = data.utilisateur;
-                    $('#message').html('Bonjour');
-        
+                    //!!! data.status -JSON not string
+                    var status = JSON.stringify(data.status);
+                    
+                    console.log(status);
+                    console.log(status.indexOf("success"));
+                    
+                    if (status.indexOf("success")>0) {
+                        console.log("ok!")
+                        //var personne = data.utilisateur;
+                        alert('Votre inscription a réussi. Vous allez recevoir un mail confirmant votre inscription.'); 
+                        $('#message').html('Inscription OK!');
+                    } else if (status.indexOf("fail")>0) {
+                        alert("Erreur !");
+                        $('#message').html('Erreur : Veuillez recommencer ! ');
+                    }
                     
                     //window.location = "maPageSuivante.html";
                     // si connexion pas ok afficher un texte dans la div message :
                     //$('#message').html('Echec de la connexion');
                 }).fail(function() {
          
-                   $('#message').html('Echec de la connexion');
+                   $('#message').html("Erreur serveur : Echec de l'inscription");
                 });
             }
 

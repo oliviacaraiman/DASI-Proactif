@@ -33,17 +33,22 @@
                 }).done(function (data) {
                      // dataType 
                     // ici votre code...
-                    var resp = data;
-                    if(resp.status == 'success'){
-                        window.location.href = "./maPageSuivante.html";
+                    var status = JSON.stringify(data.status);
+                    console.log(status);
+                    console.log(status.indexOf("success"));
+                    
+                    if (status.indexOf("success")>=0) {
+                        $('#message').html('OK !'); 
+                    } else if (status.indexOf("fail")>=0) {
+                        alert("Erreur !");
+                        $('#message').html('Erreur : Adresse mail ou mot de passe incorrect! Veuillez recommencer ');
                     }
-                    // si connexion ok, aller sur la page suivante :
-                    window.location = "./maPageSuivante.html";
+                   // window.location = "./maPageSuivante.html";
                     // si connexion pas ok afficher un texte dans la div message :
                  //   $('#message').html('Echec de la connexion');
                 }).fail(function() {
          
-                   $('#message').html('Echec de la connexion');
+                   $('#message').html('Erreur serveur: Echec de la connexion');
                 });
             }
 

@@ -54,7 +54,7 @@ public class ActionInscription extends Action {
         
         if (s.register(person, mdp)) {
             req.setAttribute("status", "success");
-            session.setAttribute("utilisateur", person);
+           // session.setAttribute("utilisateur", person);
         }
         else req.setAttribute("status", "fail");
         
