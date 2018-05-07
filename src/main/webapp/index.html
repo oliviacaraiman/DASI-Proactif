@@ -13,7 +13,7 @@
         <button id="bouton-connexion">Se connecter</button>   
         <div id="message"></div>
         <a href="inscription.html">S'inscrire</a>
-        <a href="inscription.html">Mot de passe oublie</a>
+        <a href="reinit.html">Mot de passe oublie</a>
         
         <script>
             function connexion() {
@@ -56,9 +56,25 @@
             $(document).ready(function () {
                 // ajout d'un "handler" sur le clic du bouton de connexion
                 $('#bouton-connexion').on('click', function () {
-                    // affichage pour debugage dans la console javascript du navigateur
-                    console.log('Click sur le bouton "Se Connecter"');
-                    // appel de la fonction connexion
+                    var valide = true;
+                    $('input[type="text"],input[type="password"]').each(function() {
+	            if ($.trim($(this).val()) == '') {
+	                valide = false;
+	                $(this).css({
+	                    "border": "1px solid red",
+	                    "background": "#FFCECE"
+	                });
+	            }
+	            else {
+	                $(this).css({
+	                    "border": "",
+	                    "background": ""
+	                });
+	            }
+	        });
+	        if (valide == false)
+	            e.preventDefault();
+	        else
                     connexion();
                 });
             });
