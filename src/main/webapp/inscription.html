@@ -39,6 +39,7 @@
                 <input type="text" name="pays" id="champ-pays"><br><br>
      
         <button id="bouton-inscription">S'inscrire</button>   
+        <button id="bouton-reinitialisation">Reinitialiser</button>   
         <a href="index.html">Accueil</a>
         <div id="message"></div>
         
@@ -95,6 +96,7 @@
                         //var personne = data.utilisateur;
                         alert('Votre inscription a réussi. Vous allez recevoir un mail confirmant votre inscription.'); 
                         $('#message').html('Inscription OK!');
+                        window.location = "index.html";
                     } else if (status.indexOf("fail")>0) {
                         alert("Erreur !");
                         $('#message').html('Erreur : Veuillez recommencer ! ');
@@ -112,27 +114,34 @@
             $(document).ready(function () {
                 // ajout d'un "handler" sur le clic du bouton de connexion
                 $('#bouton-inscription').on('click', function () {
-                    var valide = true;
-                    $('input[type="text"],input[type="password"]').each(function() {
-	            if ($.trim($(this).val()) == '') {
-	                valide = false;
-	                $(this).css({
-	                    "border": "1px solid red",
-	                    "background": "#FFCECE"
-	                });
-	            }
-	            else {
-	                $(this).css({
-	                    "border": "",
-	                    "background": ""
-	                });
-	            }
-	        });
-	        if (valide == false)
-	            e.preventDefault();
-	        else
+//                    var valide = true;
+//                    $('input[type="text"],input[type="password"]').each(function() {
+//	            if ($.trim($(this).val()) == '') {
+//	                valide = false;
+//	                $(this).css({
+//	                    "border": "1px solid red",
+//	                    "background": "#FFCECE"
+//	                });
+//	            }
+//	            else {
+//	                $(this).css({
+//	                    "border": "",
+//	                    "background": ""
+//	                });
+//	            }
+//	        });
+//	        if (valide == false)
+//	            e.preventDefault();
+//	        else
+                   // $('#bouton-inscription').removeAttr(':disabled')
                     inscription();
                 });
+            });
+            
+            $('#bouton-reinitialisation').on('click', function () {
+                $('input[type="text"],input[type="password"]').each(function() {
+	            $(this).val('');
+	         });
             });
             
         </script>

@@ -12,14 +12,15 @@ import javax.servlet.http.HttpServletRequest;
  * @author mleral
  */
 public class ActionReinitialisation extends Action {
-        @Override
-        public void run(HttpServletRequest req){
-                String nom = req.getParameter("prenom");
-                    //mettre 
-                    // https://www.tutorialspoint.com/servlets/servlets-form-data.htm
-                    
-            
-            
-            //s.register();
+
+    @Override
+    public void run(HttpServletRequest req) {
+        String mail = req.getParameter("mail");
+        System.out.println(mail);
+        if (s.resetPassword(mail)) {
+            req.setAttribute("status", "success");
+        } else {
+            req.setAttribute("status", "fail");
         }
+    }
 }

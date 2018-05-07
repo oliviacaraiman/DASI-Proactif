@@ -15,35 +15,36 @@
         
         <script>
 
-            function reinit() {
-                var champAdress = $('#champ-adress').val();
-                
+            function reinitialisation() {
+                var champAdress = $('#champ-adresse').val();
                 $('#message').html('Reinitialisation en cours...');
-
                 $.ajax({
                     url: './ActionServlet',
-                    method: 'POST',
+                    method: 'GET',
                     data: {
-                        action: 'reinitialiser',
-                        login: champAdress
+                        action: 'reinitialisation',
+                        mail: champAdress
                     },
                     dataType: 'json'
                 }).done(function (data) {
-                    // ici votre code...
-                    // 
-                    // si connexion ok, aller sur la page suivante :
-                    window.location = "index.html";
-                    // si connexion pas ok afficher un texte dans la div message :
-                    $('#message').html('Echec de la connexion');
+                    var status = JSON.stringify(data.status);
+                    console.log(status);
+                    console.log(status.indexOf("success"));
+                    
+                    if (status.indexOf("success")>=0) {
+                        alert("Un nouvel mot de passe a ete envoye sur votre adresse mail.");
+                        window.location = "index.html";
+                    } else if (status.indexOf("fail")>=0) {
+                        alert("Erreur : Adresse mail incorrecte! Veuillez recommencer.");
+                        $('#message').html('Erreur : Adresse mail incorrecte! Veuillez recommencer. ');
+                    }
+                }).fail(function() {
+                   $('#message').html('Erreur serveur: Echec de la connexion');
                 });
             }
 
             $(document).ready(function () {
-                // ajout d'un "handler" sur le clic du bouton de connexion
                 $('#bouton-reinit').on('click', function () {
-                    // affichage pour debugage dans la console javascript du navigateur
-                    console.log('Click sur le bouton "Réinitialiser le mot de passe"');
-                    // appel de la fonction de réinitialisation
                     reinitialisation();
                 }); 
             });

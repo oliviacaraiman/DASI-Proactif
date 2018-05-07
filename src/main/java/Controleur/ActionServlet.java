@@ -57,9 +57,7 @@ public class ActionServlet extends HttpServlet {
                 Action action = new ActionInscription();
                 action.run(request);
                 status.addProperty("status", (String) request.getAttribute("status"));
-//          gsonCoverter(out, (Person) session.getAttribute("utilisateur"));
                 JsonObject container = new JsonObject();
-                //container.add("utilisateur",gsonCoverter((Person) session.getAttribute("utilisateur")));
                 container.add("status",status);
                 out.println(gson.toJson(container));
                 out.close();
@@ -70,22 +68,27 @@ public class ActionServlet extends HttpServlet {
                 action.run(request);
                 JsonObject container = new JsonObject();
                 String stat = (String) request.getAttribute("status");
+                System.out.println(stat);
                 status.addProperty("status", stat);
-                if (stat.equals("succes")) {
+                if (stat.equals("success")) {
+                    System.out.println("CONNEXION");
                     container.add("utilisateur",converter.personToJson((Person) session.getAttribute("utilisateur")));
                 }
                 container.add("status",status);
                 out.println(gson.toJson(container));
                 out.close();
-                //out = response.getWriter();
                 break;
             }
-//           case "reinitialisation" : {
-//                Action action = new ActionReinitialisation();
-//                action.run(request);
-//                
-//                break;
-//            }
+           case "reinitialisation" : {
+                Action action = new ActionReinitialisation();
+                action.run(request);
+                status.addProperty("status", (String) request.getAttribute("status"));
+                JsonObject container = new JsonObject();
+                container.add("status",status);
+                out.println(gson.toJson(container));
+                out.close();
+                break;
+            }
 //           case "envoyer" : {
 //                Action action = new ActionEnvoyerDemande();
 //                action.run(request);
