@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page réinitialiser le mot de passe</title>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <h3>Page réinitialiser le mot de passe</h3>
+        <h1>PROACT'IF</h1>
+        Adresse e-mail : <input type="text" id="champ-adresse" name="adress" /><br>
+        <button id="bouton-reinit">Réinitialiser le mot de passe</button>
+        <a href="http://localhost:8080/TP-ProactIF-Front/index.html">Accueil</a>
+        <div id="message"></div>
+        
+        <script>
+
+            function reinit() {
+                var champAdress = $('#champ-adress').val();
+                
+                $('#message').html('Reinitialisation en cours...');
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'reinitialiser',
+                        login: champAdress
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    // ici votre code...
+                    // 
+                    // si connexion ok, aller sur la page suivante :
+                    window.location = "index.html";
+                    // si connexion pas ok afficher un texte dans la div message :
+                    $('#message').html('Echec de la connexion');
+                });
+            }
+
+            $(document).ready(function () {
+                // ajout d'un "handler" sur le clic du bouton de connexion
+                $('#bouton-reinit').on('click', function () {
+                    // affichage pour debugage dans la console javascript du navigateur
+                    console.log('Click sur le bouton "Réinitialiser le mot de passe"');
+                    // appel de la fonction de réinitialisation
+                    reinitialisation();
+                }); 
+            });
+            
+        </script>
+    </body>
+</html>
