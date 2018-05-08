@@ -1,0 +1,12 @@
+A faire :
+- Site Client : demander intervention, historiques interv
+- Site Employe : les 3 onglets (intervention a effectuer, anciennes interventions, carte des intervention)
+- Mise en forme avec CSS : laisser a la fin
+
+En cours :
+- Site Client : demander intervention 
+
+Fini:
+- Page de login (html + actions)
+- Page d'inscription (html + actions)
+- Page de reinitialisation de mdp (html + actions)
