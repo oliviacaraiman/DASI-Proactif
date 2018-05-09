@@ -16,7 +16,6 @@ public class ActionReinitialisation extends Action {
     @Override
     public void run(HttpServletRequest req) {
         String mail = req.getParameter("mail");
-        System.out.println(mail);
         if (s.resetPassword(mail)) {
             req.setAttribute("status", "success");
         } else {

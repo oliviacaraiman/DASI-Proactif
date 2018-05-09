@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
   
        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+       <script type="text/javascript" src="jquery.cookie.js"></script>
     </head>
     <body>
         <h1>Formulaire de login</h1>
@@ -40,6 +41,11 @@
                     if (status.indexOf("success")>=0) {
                         var personne = data.utilisateur;
                         $('#message').html('OK ! User : ' + personne.nom + ' ' + personne.prenom);
+                        $.cookie('user', personne.mail, { expires: 1 });
+                        console.log($.cookie('user'));
+                        var user = $.cookie('user');
+                        //window.location.reload();
+                        window.location="demandeClient.html";
                     } else if (status.indexOf("fail")>=0) {
                         alert("Erreur : Adresse mail ou mot de passe incorrect! Veuillez recommencer.");
                         $('#message').html('Erreur : Adresse mail ou mot de passe incorrect! Veuillez recommencer. ');
@@ -72,9 +78,7 @@
 	                });
 	            }
 	        });
-	        if (valide == false)
-	            e.preventDefault();
-	        else
+	        if (valide != false)
                     connexion();
                 });
             });

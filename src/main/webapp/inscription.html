@@ -98,16 +98,13 @@
                         $('#message').html('Inscription OK!');
                         window.location = "index.html";
                     } else if (status.indexOf("fail")>0) {
-                        alert("Erreur !");
-                        $('#message').html('Erreur : Veuillez recommencer ! ');
+                        alert("Erreur : L'adresse mail saisie est déjà utilisé ou l'adresse n'est pas géolocalisable. Veuillez recommencer !");
+                        $('#message').html("Erreur : L'adresse mail saisie est déjà utilisé ou l'adresse n'est pas géolocalisable. Veuillez recommencer ! ");
                     }
-                    
-                    //window.location = "maPageSuivante.html";
-                    // si connexion pas ok afficher un texte dans la div message :
-                    //$('#message').html('Echec de la connexion');
+
                 }).fail(function() {
          
-                   $('#message').html("Erreur serveur : Echec de l'inscription");
+                   $('#message').html("Erreur serveur : Echec de l'inscription. Veuillez recommencer ! ");
                 });
             }
 

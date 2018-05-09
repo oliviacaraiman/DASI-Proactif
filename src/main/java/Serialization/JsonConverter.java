@@ -23,6 +23,7 @@ public class JsonConverter {
         jsonPersonne.addProperty("civilite", p.getHonorific());
         jsonPersonne.addProperty("nom", p.getFirstName());
         jsonPersonne.addProperty("prenom", p.getLastName());
+        jsonPersonne.addProperty("mail", p.getEmail());
         return jsonPersonne;
     }
 

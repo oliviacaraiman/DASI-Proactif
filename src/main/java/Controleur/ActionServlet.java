@@ -89,12 +89,17 @@ public class ActionServlet extends HttpServlet {
                 out.close();
                 break;
             }
-//           case "envoyer" : {
-//                Action action = new ActionEnvoyerDemande();
-//                action.run(request);
-//                
-//                break;
-//            }
+           case "demanderIntervention" : {
+                Action action = new ActionEnvoyerDemande();
+                action.run(request);
+                System.out.println("DS demandeInte");
+                status.addProperty("status", (String) request.getAttribute("status"));
+                JsonObject container = new JsonObject();
+                container.add("status",status);
+                out.println(gson.toJson(container));
+                out.close();
+                break;
+            }
 //           case "interventionClient" : {
 //                Action action = new ActionAfficherInterventionClient();
 //                action.run(request);

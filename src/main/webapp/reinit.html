@@ -32,14 +32,14 @@
                     console.log(status.indexOf("success"));
                     
                     if (status.indexOf("success")>=0) {
-                        alert("Un nouvel mot de passe a ete envoye sur votre adresse mail.");
+                        alert("Un nouvel mot de passe a été envoyé sur votre adresse mail.");
                         window.location = "index.html";
                     } else if (status.indexOf("fail")>=0) {
                         alert("Erreur : Adresse mail incorrecte! Veuillez recommencer.");
                         $('#message').html('Erreur : Adresse mail incorrecte! Veuillez recommencer. ');
                     }
                 }).fail(function() {
-                   $('#message').html('Erreur serveur: Echec de la connexion');
+                   $('#message').html('Erreur serveur: Veuillez recommencer. ');
                 });
             }
 
