@@ -5,8 +5,17 @@
  */
 package Serialization;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import fr.insalyon.dasi.entities.Intervention;
+import fr.insalyon.dasi.entities.InterventionAnimal;
+import fr.insalyon.dasi.entities.InterventionLivraison;
 import fr.insalyon.dasi.entities.Person;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -27,4 +36,39 @@ public class JsonConverter {
         return jsonPersonne;
     }
 
+    public static JsonArray interventionsClientToJson(List<Intervention> liste) {
+        System.out.println("liste: " + liste.size());
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+        JsonArray jsonListe = new JsonArray();
+       // JsonObject jsonIntervention = new JsonObject();
+        for(Intervention i : liste) {
+            JsonObject jsonIntervention = new JsonObject();
+            jsonIntervention.addProperty("type", i.getType());
+            jsonIntervention.addProperty("date", sdf.format(i.getStartDate()));
+            jsonIntervention.addProperty("employe", i.getEmployee().getFirstName() +" "+ i.getEmployee().getLastName());
+            jsonIntervention.addProperty("description", i.getDescription());
+            if (i.getEndDate() != null) {
+                jsonIntervention.addProperty("statut", "Fini");
+                jsonIntervention.addProperty("dateFin", sdf.format(i.getEndDate()));
+            } else {
+                jsonIntervention.addProperty("statut", "En cours");
+                jsonIntervention.addProperty("dateFin", "");
+            }
+            
+            if (i instanceof InterventionLivraison) {
+                String objet = ((InterventionLivraison) i).getSubject();
+                jsonIntervention.addProperty("objet", objet);
+                String entreprise = ((InterventionLivraison) i).getCompany();
+                jsonIntervention.addProperty("entreprise", entreprise);
+            } else if (i instanceof InterventionAnimal) {
+                String animal = ((InterventionAnimal) i).getAnimal();
+                jsonIntervention.addProperty("animal", animal);
+            }
+            
+            
+            jsonListe.add(jsonIntervention);
+        }
+        System.out.println("ksmlka: " +jsonListe.size());
+        return jsonListe;
+    }
 }

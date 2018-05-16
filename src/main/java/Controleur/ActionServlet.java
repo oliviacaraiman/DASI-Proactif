@@ -12,9 +12,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import fr.insalyon.dasi.dao.JpaUtil;
+import fr.insalyon.dasi.entities.Intervention;
 import fr.insalyon.dasi.entities.Person;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -100,12 +102,22 @@ public class ActionServlet extends HttpServlet {
                 out.close();
                 break;
             }
-//           case "interventionClient" : {
-//                Action action = new ActionAfficherInterventionClient();
-//                action.run(request);
-//                
-//                break;
-//            }
+           case "listeInterventionsClient" : {
+                Action action = new ActionAfficherInterventionClient();
+                action.run(request);
+                System.out.println("DS demandeInterventionsListe " + (String) request.getAttribute("statusInterventions"));
+                status.addProperty("statusInterventions", (String) request.getAttribute("statusInterventions"));
+                JsonObject container = new JsonObject();
+                
+                if (((String)request.getAttribute("statusInterventions")).equals("success")) {
+                    List<Intervention> liste = (List)session.getAttribute("interventions");
+                    container.add("interventions",converter.interventionsClientToJson(liste));
+                }
+                container.add("statusInterventions",status);
+                out.println(gson.toJson(container));
+                out.close();
+                break;
+            }
 //           case "completerAttestation" : {
 //                Action action = new ActionFillAtestation();
 //                action.run(request);
