@@ -96,7 +96,7 @@ public class ActionServlet extends HttpServlet {
                 action.run(request);
                 System.out.println("DS demandeInte");
                 status.addProperty("status", (String) request.getAttribute("status"));
-                JsonObject container = new JsonObject();
+                JsonObject container = new JsonObject();                         
                 container.add("status",status);
                 out.println(gson.toJson(container));
                 out.close();
@@ -105,7 +105,6 @@ public class ActionServlet extends HttpServlet {
            case "listeInterventionsClient" : {
                 Action action = new ActionAfficherInterventionClient();
                 action.run(request);
-                System.out.println("DS demandeInterventionsListe " + (String) request.getAttribute("statusInterventions"));
                 status.addProperty("statusInterventions", (String) request.getAttribute("statusInterventions"));
                 JsonObject container = new JsonObject();
                 

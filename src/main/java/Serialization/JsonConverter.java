@@ -35,12 +35,11 @@ public class JsonConverter {
         jsonPersonne.addProperty("mail", p.getEmail());
         return jsonPersonne;
     }
-
+    
     public static JsonArray interventionsClientToJson(List<Intervention> liste) {
         System.out.println("liste: " + liste.size());
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
         JsonArray jsonListe = new JsonArray();
-       // JsonObject jsonIntervention = new JsonObject();
         for(Intervention i : liste) {
             JsonObject jsonIntervention = new JsonObject();
             jsonIntervention.addProperty("type", i.getType());
@@ -68,7 +67,8 @@ public class JsonConverter {
             
             jsonListe.add(jsonIntervention);
         }
-        System.out.println("ksmlka: " +jsonListe.size());
         return jsonListe;
     }
+    
+    
 }

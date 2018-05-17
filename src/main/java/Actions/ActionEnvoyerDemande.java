@@ -26,7 +26,6 @@ public class ActionEnvoyerDemande extends Action {
 
     @Override
     public void run(HttpServletRequest req) {
-        System.out.println("DS Envoyer Demande");
         Intervention intervention;
         HttpSession session = req.getSession();
         String type = req.getParameter("type");

@@ -19,32 +19,33 @@ and open the template in the editor.
             if($.cookie('user') == undefined) 
                 window.location.replace("index.html");
         </script>
-        
-        
     </head>
+    
     <body>
         <h1>Mes demandes d'intervention</h1>
-        <!--Premier menu en accordeon-->
         <button id="bouton-toggle">+</button>
         <h2>Demander une intervention</h2>
         <div id="demanderIntervention"> 
-            <table>
-                <td>Type*:
+<!--            <table>
+                <td>-->
+                    Type*:
                     <form>
                         <select name="Type" id="type">
                             <option>Livraison
                             <option>Animal
                             <option>Incident
                         </select>
-                    </form></td>
-                <!--<td>Date de début souhaitée (HH:MM jj/MM/yyyy): <br>-->
-                    <td>
+                    </form>
+<!--                </td>
+                <td>Date de début souhaitée (HH:MM jj/MM/yyyy): <br>
+                    <td>-->
                     <!--<div align="right">-->
                     <label for="datedebut">Date du debut*: </label> 
-                    <input type='date' name="datedebut" id="champ-date"><br>
+                    <input type='date' name="datedebut" id="champ-date"><br/>
                     <label for="heuredebut">Heure du debut*: </label> 
-                    <input type='time' name="heuredebut" id="champ-heure"></td>
-            </table>
+                    <input type='time' name="heuredebut" id="champ-heure">
+<!--                    </td>
+            </table>-->
 
             <div id='livraison'>
                 Champ supplémentaire 1 (e.g. Objet)*:
@@ -57,15 +58,11 @@ and open the template in the editor.
                 Animal*:
                 <input type="text" name="champAnimal" id="champAnimal"><br>
             </div>
-            Description*: <br>
-            <textarea name="textarea" id="description" rows="10" cols="50" >
-
-            </textarea>
-            <br>
-            <table>
-                <td><button id="bouton-demande">Demander l'intervention</button>   </td>
-                <td> <button id="bouton-annulation">Annuler</button>    </td>
-            </table>
+            Description*: <br/>
+            <textarea name="textarea" id="description" rows="10" cols="50" ></textarea>
+            <br/>
+                <button id="bouton-demande">Demander l'intervention</button>   
+                <button id="bouton-annulation">Annuler</button>    
         </div>
         <script>
              function ajouterIntervention() {
@@ -77,40 +74,38 @@ and open the template in the editor.
                     },
                     dataType: 'json'
                 }).done(function (data) {
-                   $('#liste-personnes').empty();
+                   
                     var status = JSON.stringify(data.statusInterventions);
                     
                     if (status.indexOf("success") >= 0) {
                         var interventions = data.interventions;
-
                         for (var i = 0; i < interventions.length; i++) {
                             var intervention = interventions[i];
                             $('#listeInterventions').append('<li>'+'<button id='+ i +'boutonDetails>'+ 'Show details '+'</button>   ' +intervention.type+" | "+intervention.date+ " | " + 
                                     intervention.employe+ " | " +intervention.statut+ " | "  + intervention.dateFin +'<br/>' + '<div id="'+i+ '"></div>'
                                     );
-                            
-                           // $('#'+i+'boutonDetails').append("dkjnfejw");
-                            //$('#'+i).hide();
-                            
-                            $('#'+i+'boutonDetails').on('click', function () {
-                                console.log(i);
+
                                 if(intervention.type.indexOf("Livraison")>=0){
                                         $('#'+i).append('Objet: '+intervention.objet+ '<br/>' + 'Entreprise: ' + intervention.entreprise+ '<br/>' );
                                 } else if (intervention.type.indexOf("Animal")>=0){
                                         $('#'+i).append('Animal: '+intervention.animal + '<br/>');
                                 }
 
-                                $('#listeInterventions').append('Description: '+intervention.description+'</li>');
+                            $('#'+i).append('Description: '+intervention.description);
+                            $('#'+i).hide();
+                            $('#listeInterventions').append('</li>');
+                            
+                            $('#'+i+'boutonDetails').on('click', function () {
+                                var idDiv = (this.id.toString()).substr(0,1);
+                                $('#'+idDiv).toggle();
                             });
                         }
                     } else if (status.indexOf("fail") >= 0) {
-                        //alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
                         $('#message').html("Vous n'avez effectué aucune demande d'intervention.");
                     }
                 }).fail(function () {
                     alert("Erreur serveur. Veuillez recommencer.");
                 });
-                 
             }
 
             function demandeIntervention() {
@@ -144,12 +139,11 @@ and open the template in the editor.
                         alert("Votre demande a été prise en compte.");
                         // aficher l'intervention ds la liste des interventions
                         $('#demanderIntervention').toggle();
-                        
-                       // ajouterIntervention(); 
+                        $('#listeInterventions').empty();
+                        ajouterIntervention(); 
 
                     } else if (status.indexOf("fail") >= 0) {
                         alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
-//                        $('#message').html('Erreur : Adresse mail incorrecte! Veuillez recommencer. ');
                     }
                 }).fail(function () {
                     alert("Erreur serveur. Veuillez recommencer.");
@@ -157,7 +151,7 @@ and open the template in the editor.
             }
 
             $(document).ready(function () {
-                
+
                 $('#animal').hide();
                 $('#demanderIntervention').hide();
 
@@ -166,8 +160,6 @@ and open the template in the editor.
                 });
 
                 $('#type').on('change', function () {
-//                    console.log("On change : ")
-//                    console.log($(this).val());
                     if ($(this).val() === 'Livraison') {
                         $('#livraison').show();
                         $('#animal').hide();
@@ -181,8 +173,8 @@ and open the template in the editor.
                 });
 
                 $('#bouton-demande').on('click', function () {
-                    //console.log("Demande");
                     demandeIntervention();
+                    
                 });
 
                 $('#bouton-annulation').on('click', function () {
@@ -192,7 +184,7 @@ and open the template in the editor.
                     $('#demanderIntervention').toggle();
                 });
                 ajouterIntervention();
-                
+
                 $('#deconnexion').on('click', function () {
                     $.removeCookie('user');
                     window.location = "index.html";
