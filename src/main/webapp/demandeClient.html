@@ -22,6 +22,7 @@ and open the template in the editor.
     </head>
     
     <body>
+        <img src="logo.PNG" alt="logo" id="logo" height="80" width ="110">
         <h1>Mes demandes d'intervention</h1>
         <button id="bouton-toggle">+</button>
         <h2>Demander une intervention</h2>
@@ -154,6 +155,10 @@ and open the template in the editor.
 
                 $('#animal').hide();
                 $('#demanderIntervention').hide();
+
+                $('#logo').on('click', function () {
+                    window.location = "demandeClient.html";
+                });
 
                 $('#bouton-toggle').on('click', function () {
                     $('#demanderIntervention').toggle();
