@@ -9,16 +9,254 @@ and open the template in the editor.
         <title>Service Employe</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+            html, body { height: 100%; margin: 0; padding: 0; }
+            h1 { text-align: center; }
+            #map { height: 80%; width: 60% }
+/*            #liste { height: 30%; width: 35% ; position: absolute; right:0px; top:5%;}*/
+        </style>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <table>
-            <td><button id="bouton-futur">Interventions à effectuer</button>   </td>
-            <td><button id="bouton-passe">Mes anciennes interventions</button>   </td>
-            <td><button id="bouton-present">Carte de interventions du jour</button>   </td>
-        </table>
+        <div class="tab">
+            <button id="bouton-futur" onclick="window.location = 'employeFutur.html'">Interventions à effectuer</button>  
+            <button id="bouton-passe" onclick="window.location = 'employeAncienne.html'">Mes anciennes interventions</button>
+            <button id="bouton-present" onclick="window.location = 'employeInterventionJour.html'">Carte de interventions du jour</button>
+        </div>
+
+        <div id="map"></div>
         
-        <div>TODO write content</div>
-    
-    
+        <div id="espaceMessage"></div>
+        <div id="liste"></div>
+        
+        <script type="text/javascript">
+
+            var centerLat = 45.764043;
+            var centerLong = 4.835659;
+            var googleMapInstance = null;
+            var iconImage = {url: './img/red_Marker.png'};
+            var markers = [];
+            var precedentIndex;
+            var precedentIndexMouseover;
+            var detailsOpened= 0;
+            
+            function afficherInterventions() {
+
+                var interventions = arguments[0];
+                for (var i = 0; i < interventions.length; i++) {
+                    var intervention = interventions[i];
+                    $('#liste').append('<li>' + '<button id=' + i + 'boutonDetails>' + ' Details ' + '</button>   ' + intervention.type + " | " + intervention.date + " | " +
+                            intervention.client + " | " + intervention.statut + " | " + intervention.dateFin + '<br/>' + '<div id="' + i + '"></div>'
+                            );
+                    $('#' + i + 'boutonDetails').css({"background-color" :"#3d3d5c" , "border" : "none", "height":"30px", "color":"white"});
+                    
+                    if (intervention.type.indexOf("Livraison") >= 0) {
+                        $('#' + i).append('Objet: ' + intervention.objet + '<br/>' + 'Entreprise: ' + intervention.entreprise + '<br/>');
+                    } else if (intervention.type.indexOf("Animal") >= 0) {
+                        $('#' + i).append('Animal: ' + intervention.animal + '<br/>');
+                    }
+
+                    $('#' + i).append('Description: ' + intervention.description);
+                    $('#' + i).hide();
+                    $('#liste').append('</li>');
+
+                    $('#' + i + 'boutonDetails').on('click', function () {
+                        var idDiv = (this.id.toString()).substr(0, 1);
+                        $('#' + idDiv).toggle();
+                        if ($('#' + idDiv).is(":visible"))
+                            detailsOpened = detailsOpened+ 1 ;
+                        else detailsOpened = detailsOpened-1;
+                    });
+                }
+
+                $('li').on('click', function () {
+                    $('li').removeClass("active");
+                    $(this).addClass("active");
+                    var index = $(this).index();
+//                    
+//                     if (detailsOpened !== 0) {
+//                        for (j=0; j<i, j!=index; j++) 
+//                            $('#' + j).hide();
+//                         detailsOpened = 0;
+//                                  //  if ($('#' + index).is(":visible")) detailsOpened = 1;
+//                        }
+
+                    googleMapInstance.setCenter({lat: interventions[index].lat, lng: interventions[index].long});
+                    if (precedentIndex != null) markers[precedentIndex].setIcon({url: './img/red_Marker.png'});
+                    markers[index].setIcon({url: './img/green_Marker.png'});
+                    precedentIndex = index;
+                    
+                });
+            }
+
+
+            function geolocaliserInterventions() {
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        action: 'interventionsEmployeJour',
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    var status = JSON.stringify(data.status);
+                    //recuperation des coordonnees de l'employe
+                    centerLat = data.coordEmploye.latEmp;
+                    centerLong = data.coordEmploye.longEmp;
+                    googleMapInstance = new google.maps.Map(document.getElementById('map'), {
+                            center: {lat: centerLat, lng: centerLong},
+                            zoom: 13
+                        });
+                    var marker = new google.maps.Marker({
+                            map: googleMapInstance,
+                            position: {lat: centerLat, lng: centerLong},
+                            title: "Vous etes ici !",
+                            icon:{url: './img/blue_MarkerO.png'}
+                        });
+                    if (status.indexOf("success") >= 0) {
+                        //recuperation des coordonnees des interventions du jour
+                        var interventions = data.interventionsJour;
+                        afficherInterventions(interventions);
+                        for (var i = 0; i < interventions.length; i++) {
+                            var latitude = interventions[i].lat;
+                            var longitude = interventions[i].long;
+                            var infowindow = makeInfoWindow('');
+                            var marker = new google.maps.Marker({
+                                map: googleMapInstance,
+                                position: {lat: latitude, lng: longitude},
+                                title: 'Endroit #' + i,
+                                icon: iconImage
+                            });
+                            markers[i] = marker;
+                            
+                            //mise en valeur de l'intervention survolée
+                            markers[i].addListener('mouseover', function () {
+                                //change la couleur de marker
+                                var index= markers.indexOf(this);
+                                if(this.getIcon().url === "./img/red_Marker.png") 
+                                    markers[index].setIcon({url: './img/blue_Marker.png'});
+                                //centre l'élément de la liste
+                                $("li").removeClass("activeScroll");
+                                var listItem = ($("li").eq(index));
+                                listItem.addClass("activeScroll");
+                                var diff =  -($("#liste").height())/2+ listItem.offset().top;
+                                if (detailsOpened === 0)
+                                $("#liste").animate({scrollTop:diff})
+                            });
+                            
+                            //revient à la couleur initialle
+                            markers[i].addListener("mouseout",function () {
+                                $("li").removeClass("activeScroll");
+                                if(this.getIcon().url === "./img/blue_Marker.png") 
+                                    this.setIcon({url: './img/red_Marker.png'});
+                            });
+                            
+                            //afichage des détails d'une intervention sur click sur le marker
+                            markers[i].addListener('click', function () {
+//                                for (j=0; j<i; j++) markers[i].set
+                                
+
+                                if (precedentIndex != null) markers[precedentIndex].setIcon({url: './img/red_Marker.png'});
+                                var index= markers.indexOf(this);
+                                markers[index].setIcon({url: './img/green_Marker.png'});
+                                $("li").removeClass("active");
+                                var listItem = ($("li").eq(index));
+                                listItem.removeClass("activeScroll");
+                                listItem.addClass("active");
+                                //centre l'intervention dans la liste
+                               var diff =  -($("#liste").height())/2+ listItem.offset().top;
+                                $("#liste").animate({scrollTop:diff})
+//                                //detailsOpened = detailsOpened + 1;
+                                
+                                // ferme les détails des autres interventions
+                                if (detailsOpened !== 0) {
+                                    for (j=0; j<i; j++) 
+                                        $('#' + j).hide();
+                                    detailsOpened = 0;
+                                  //  if ($('#' + index).is(":visible")) detailsOpened = 1;
+                                } 
+                                    
+                                $('#' + index).show();
+                                detailsOpened = 1 ;
+//                                if ($('#' + index).is(":visible")) {
+//                                    detailsOpened = detailsOpened+ 1 ;
+//                                }
+//                                    else detailsOpened = detailsOpened-1;
+//                                
+                                console.log(detailsOpened);
+                                precedentIndex = index;
+                            });
+                        }
+
+                    } 
+                    else if (status.indexOf("fail") >= 0) {
+                        $('#espaceMessage').html("Il n'y a pas encore de demandes d'intervention pour aujourd'hui.");
+                        $('#liste').css({"visibility":"hidden"});
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+            }
+
+            function makeInfoWindow(title) {
+                return new google.maps.InfoWindow({
+                    content: '<div>Information: ' + title + '</div>'
+                });
+            }
+
+            function attachInfoWindow(marker, infowindow, htmlDescription) {
+                marker.addListener('click', function () {
+
+                    infowindow.setContent(htmlDescription);
+                    infowindow.open(googleMapInstance, this);
+                });
+            }
+
+            function initMap() {
+                geolocaliserInterventions();
+
+                // Simuler un appel AJAX (attente 5s)
+//                setTimeout(
+//                        generateMarkers,
+//                        5000
+//                        );
+            }
+//
+//            function generateMarkers() {
+//
+//                // Petite popup Google Maps
+//                var infowindow = makeInfoWindow('');
+//
+//                var position = {lat: 45.782122, lng: 4.872735};
+//
+//                for (var i = 0; i < 100; i++) {
+//
+//                    var iconImage = null; // marker par défaut
+//                    if (i % 2 === 0) {
+//                        // image pour marker personnalisé
+//                        iconImage = {url: './image/UnderConstruction.png', scaledSize: new google.maps.Size(32, 32)}
+//                    }
+//
+//                    var marker = new google.maps.Marker({
+//                        map: googleMapInstance,
+//                        position: {lat: position.lat + (Math.random() - 0.5) / 10.0, lng: position.lng + 2 * (Math.random() - 0.5) / 10.0},
+//                        title: 'Endroit #' + i,
+//                        icon: iconImage
+//                    });
+//
+//                    attachInfoWindow(
+//                            marker, infowindow,
+//                            '<div><strong><a href="./endroit.html?' + i + '">Endroit #' + i + '</a></strong><br/>Ceci est l\'endroit charmant numéro ' + i + '<br/>' + 'Incroyable !' + '</div>'
+//                            );
+//                }
+//
+//            } 
+
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAklw96N9rLd93ubr-F04CN7qi2ryKayAc&callback=initMap">
+        </script>
+
+
     </body>
 </html>

@@ -8,66 +8,66 @@ and open the template in the editor.
     <head>
         <title>Mes demandes d'intervention</title>
         <meta charset="UTF-8">
+        <link rel="stylesheet" href="styles.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="jquery.cookie.js"></script>
-        
+
         <script>
             console.log($.cookie('user'));
-            console.log($.cookie('user')== undefined);
-            if($.cookie('user') == undefined) 
+            console.log($.cookie('user') == undefined);
+            if ($.cookie('user') == undefined)
                 window.location.replace("index.html");
         </script>
     </head>
-    
+
     <body>
-        <img src="logo.PNG" alt="logo" id="logo" height="80" width ="110">
-        <h1>Mes demandes d'intervention</h1>
-        <button id="bouton-toggle">+</button>
-        <h2>Demander une intervention</h2>
-        <div id="demanderIntervention"> 
-<!--            <table>
-                <td>-->
-                    Type*:
-                    <form>
-                        <select name="Type" id="type">
-                            <option>Livraison
-                            <option>Animal
-                            <option>Incident
-                        </select>
-                    </form>
-<!--                </td>
-                <td>Date de début souhaitée (HH:MM jj/MM/yyyy): <br>
-                    <td>-->
-                    <!--<div align="right">-->
-                    <label for="datedebut">Date du debut*: </label> 
-                    <input type='date' name="datedebut" id="champ-date"><br/>
-                    <label for="heuredebut">Heure du debut*: </label> 
-                    <input type='time' name="heuredebut" id="champ-heure">
-<!--                    </td>
-            </table>-->
+        <a href='' id="deconnexion">Se déconnecter</a>
+        <img src="img/logo.PNG" alt="logo" id="logo" height="110" width ="150">
+        <h2 >Mes demandes d'intervention</h2>
+        <div id ="interventionDemande">
+            <button id="bouton-toggle">+</button>
+            <h3 id="demande">Demander une intervention</h3>
+        </div>
+            <div id="demanderIntervention"> 
+                <!--            <table>
+                                <td>-->
+                Type*:
+                <form>
+                    <select name="Type" id="type">
+                        <option>Livraison
+                        <option>Animal
+                        <option>Incident
+                    </select>
+                </form>
+                <label for="datedebut">Date du debut*: </label> 
+                <input type='date' name="datedebut" id="champ-date"><br/>
+                <label for="heuredebut">Heure du debut*: </label> 
+                <input type='time' name="heuredebut" id="champ-heure">
 
-            <div id='livraison'>
-                Champ supplémentaire 1 (e.g. Objet)*:
-                <input type="text" name="champObjet" id="champObjet"><br>
-                Champ supplémentaire 2 (e.g. Entreprise)*:
-                <input type="text" name="champEntreprise" id="champEntreprise"><br>
-            </div>
 
-            <div id='animal' >
-                Animal*:
-                <input type="text" name="champAnimal" id="champAnimal"><br>
-            </div>
-            Description*: <br/>
-            <textarea name="textarea" id="description" rows="10" cols="50" ></textarea>
-            <br/>
+                <div id='livraison'>
+                    Champ supplémentaire 1 (e.g. Objet)*:
+                    <input type="text" name="champObjet" id="champObjet"><br>
+                    Champ supplémentaire 2 (e.g. Entreprise)*:
+                    <input type="text" name="champEntreprise" id="champEntreprise"><br>
+                </div>
+
+                <div id='animal' >
+                    Animal*:
+                    <input type="text" name="champAnimal" id="champAnimal"><br>
+                </div>
+                Description*: <br/>
+                <textarea name="textarea" id="description" rows="10" cols="50" ></textarea>
+                <br/>
                 <button id="bouton-demande">Demander l'intervention</button>   
                 <button id="bouton-annulation">Annuler</button>    
-        </div>
+            </div>
+
         <script>
-             function ajouterIntervention() {
-                 $.ajax({
+            function ajouterIntervention() {
+                $.ajax({
                     url: './ActionServlet',
                     method: 'POST',
                     data: {
@@ -75,31 +75,34 @@ and open the template in the editor.
                     },
                     dataType: 'json'
                 }).done(function (data) {
-                   
+
                     var status = JSON.stringify(data.statusInterventions);
-                    
+                    console.log(status);
                     if (status.indexOf("success") >= 0) {
                         var interventions = data.interventions;
                         for (var i = 0; i < interventions.length; i++) {
                             var intervention = interventions[i];
-                            $('#listeInterventions').append('<li>'+'<button id='+ i +'boutonDetails>'+ 'Show details '+'</button>   ' +intervention.type+" | "+intervention.date+ " | " + 
-                                    intervention.employe+ " | " +intervention.statut+ " | "  + intervention.dateFin +'<br/>' + '<div id="'+i+ '"></div>'
+                            $('#listeInterventions').append('<li>' + '<button id=' + i + 'boutonDetails>' + 'Details ' + '</button>   ' + intervention.type + " | " + intervention.date + " | " +
+                                    intervention.employe + " | " + intervention.statut + " | " + intervention.dateFin + '<br/>' + '<div id="' + i + '"></div>'
                                     );
+                            $('#' + i + 'boutonDetails').css({"background-color": "#3d3d5c", "border": "none", "height": "30px", "color": "white"});
 
-                                if(intervention.type.indexOf("Livraison")>=0){
-                                        $('#'+i).append('Objet: '+intervention.objet+ '<br/>' + 'Entreprise: ' + intervention.entreprise+ '<br/>' );
-                                } else if (intervention.type.indexOf("Animal")>=0){
-                                        $('#'+i).append('Animal: '+intervention.animal + '<br/>');
-                                }
+                            if (intervention.type.indexOf("Livraison") >= 0) {
+                                $('#' + i).append('Objet: ' + intervention.objet + '<br/>' + 'Entreprise: ' + intervention.entreprise + '<br/>');
+                            } else if (intervention.type.indexOf("Animal") >= 0) {
+                                $('#' + i).append('Animal: ' + intervention.animal + '<br/>');
+                            }
 
-                            $('#'+i).append('Description: '+intervention.description);
-                            $('#'+i).hide();
+                            $('#' + i).append('Description: ' + intervention.description);
+                            $('#' + i).hide();
                             $('#listeInterventions').append('</li>');
-                            
-                            $('#'+i+'boutonDetails').on('click', function () {
-                                var idDiv = (this.id.toString()).substr(0,1);
-                                $('#'+idDiv).toggle();
+
+                            $('#' + i + 'boutonDetails').on('click', function () {
+                                var idDiv = (this.id.toString()).substr(0, 1);
+                                $('#' + idDiv).toggle();
                             });
+
+
                         }
                     } else if (status.indexOf("fail") >= 0) {
                         $('#message').html("Vous n'avez effectué aucune demande d'intervention.");
@@ -141,7 +144,7 @@ and open the template in the editor.
                         // aficher l'intervention ds la liste des interventions
                         $('#demanderIntervention').toggle();
                         $('#listeInterventions').empty();
-                        ajouterIntervention(); 
+                        ajouterIntervention();
 
                     } else if (status.indexOf("fail") >= 0) {
                         alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
@@ -179,7 +182,7 @@ and open the template in the editor.
 
                 $('#bouton-demande').on('click', function () {
                     demandeIntervention();
-                    
+
                 });
 
                 $('#bouton-annulation').on('click', function () {
@@ -199,9 +202,10 @@ and open the template in the editor.
         </script>
 
         <!--Deuxieme menu en accordeon en 4 parties-->
+        <h3>Liste d'interventions :</h3>
         <ul id='listeInterventions'></ul>
         <div id="message"></div>
-        <a href='' id="deconnexion">Se déconnecter</a>
+        
 
     </body>
 </html>

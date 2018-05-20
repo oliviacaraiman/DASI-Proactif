@@ -3,16 +3,17 @@
     <head>
         <title>Réinitialisation du mot de passe</title>
         <meta charset="UTF-8">
+        <link rel="stylesheet" href="styles.css">
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     </head>
     <body>
-        <h3>Page réinitialiser le mot de passe</h3>
-        <h1>PROACT'IF</h1>
+        <div class="reinit">
+        <img src="img/logo.PNG" alt="logo" id="logo" height="120" width ="150"><br>
         Adresse e-mail : <input type="text" id="champ-adresse" name="adress" /><br>
-        <button id="bouton-reinit">Réinitialiser le mot de passe</button>
-        <a href="index.html">Accueil</a>
+        <button id="bouton-reinit">Réinitialiser le mot de passe</button><br>
+        <a href="index.html">Connexion</a>
         <div id="message"></div>
-        
+        </div>
         <script>
 
             function reinitialisation() {

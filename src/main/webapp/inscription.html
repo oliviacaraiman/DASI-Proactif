@@ -4,17 +4,21 @@
     <head>
         <title>Page Inscription</title>
         <meta charset="UTF-8">
+        
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <h1>Formulaire d'inscription</h1>
+        <div class="inscription">
+        <img src="img/logo.PNG" alt="logo" id="logo" height="100" width ="130">
+        <h2>Formulaire d'inscription</h2>
                 Civilite:
                 <form>
                     <select name="civilite" id="civilite">
                         <option>Monsieur
                         <option>Madame
                     </select>
-                </form><br>
+                </form>
                 Prenom:
                 <input type="text" id="champ-prenom" name="prenom"><br>
                 Nom:   
@@ -36,18 +40,16 @@
                 Ville: 
                 <input type="text" name="ville" id="champ-ville"><br>
                 Pays:
-                <input type="text" name="pays" id="champ-pays"><br><br>
+                <input type="text" name="pays" id="champ-pays"><br>
      
-        <button id="bouton-inscription">S'inscrire</button>   
-        <button id="bouton-reinitialisation">Reinitialiser</button>   
+        <button id="bouton-inscription">S'inscrire</button><br>   
+        <button id="bouton-reinitialisation">Reinitialiser</button><br>   
         <a href="index.html">Accueil</a>
         <div id="message"></div>
-        
+        </div>
         <script>
 
             function inscription() {
-               
-               // var champLogin = $('#champ-login').val();
                 var champHonorific = $('#civilite').val();
                 var champPrenom = $('#champ-prenom').val();
                 var champNom = $('#champ-nom').val();
@@ -60,7 +62,7 @@
                 var champZipCode = $('#champ-zipCode').val();
                 var champVille = $('#champ-ville').val();
                 var champPays = $('#champ-pays').val();
-                $('#message').html('Connexion en cours...');
+                $('#message').html('Inscription en cours...');
 
                 $.ajax({
                     url: './ActionServlet',
@@ -82,18 +84,8 @@
                     },
                     dataType: 'json'
                 }).done(function (data) {
-                    // ici votre code...
-                    // 
-                    // si connexion ok, aller sur la page suivante :
-                    //!!! data.status -JSON not string
                     var status = JSON.stringify(data.status);
-                    
-                    console.log(status);
-                    console.log(status.indexOf("success"));
-                    
                     if (status.indexOf("success")>0) {
-                        console.log("ok!")
-                        //var personne = data.utilisateur;
                         alert('Votre inscription a réussi. Vous allez recevoir un mail confirmant votre inscription.'); 
                         $('#message').html('Inscription OK!');
                         window.location = "index.html";
@@ -111,26 +103,26 @@
             $(document).ready(function () {
                 // ajout d'un "handler" sur le clic du bouton de connexion
                 $('#bouton-inscription').on('click', function () {
-//                    var valide = true;
-//                    $('input[type="text"],input[type="password"]').each(function() {
-//	            if ($.trim($(this).val()) == '') {
-//	                valide = false;
-//	                $(this).css({
-//	                    "border": "1px solid red",
-//	                    "background": "#FFCECE"
-//	                });
-//	            }
-//	            else {
-//	                $(this).css({
-//	                    "border": "",
-//	                    "background": ""
-//	                });
-//	            }
-//	        });
-//	        if (valide == false)
-//	            e.preventDefault();
-//	        else
-                   // $('#bouton-inscription').removeAttr(':disabled')
+                    var valide = true;
+                    $('input[type="text"],input[type="password"]').each(function() {
+	            if ($.trim($(this).val()) == '') {
+	                valide = false;
+	                $(this).css({
+	                    "border": "1px solid red",
+	                    "background": "#FFCECE"
+	                });
+	            }
+	            else {
+	                $(this).css({
+	                    "border": "",
+	                    "background": ""
+	                });
+	            }
+	        });
+	        if (valide == false)
+	            e.preventDefault();
+	        else
+                    $('#bouton-inscription').removeAttr(':disabled')
                     inscription();
                 });
             });

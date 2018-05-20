@@ -30,7 +30,6 @@ public class ActionEnvoyerDemande extends Action {
         HttpSession session = req.getSession();
         String type = req.getParameter("type");
         String description = req.getParameter("description");
-        
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm yyyy-MM-dd");
         Date dateDebut = new Date();
         try {

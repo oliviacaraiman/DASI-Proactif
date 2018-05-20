@@ -12,6 +12,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import fr.insalyon.dasi.dao.JpaUtil;
+import fr.insalyon.dasi.dao.PersonDAO;
+import fr.insalyon.dasi.entities.Employee;
 import fr.insalyon.dasi.entities.Intervention;
 import fr.insalyon.dasi.entities.Person;
 import java.io.IOException;
@@ -73,8 +75,11 @@ public class ActionServlet extends HttpServlet {
                 System.out.println(stat);
                 status.addProperty("status", stat);
                 if (stat.equals("success")) {
-                    System.out.println("CONNEXION");
                     container.add("utilisateur",converter.personToJson((Person) session.getAttribute("utilisateur")));
+                    JsonObject employe = new JsonObject();
+                    employe.addProperty("employe", (String)session.getAttribute("employe"));
+                    System.out.println("dfdfs:" + (String)session.getAttribute("employe"));
+                    container.add("employe", employe);
                 }
                 container.add("status",status);
                 out.println(gson.toJson(container));
@@ -92,8 +97,11 @@ public class ActionServlet extends HttpServlet {
                 break;
             }
            case "demanderIntervention" : {
+               System.out.println("DS demandeInte");
+              
                 Action action = new ActionEnvoyerDemande();
                 action.run(request);
+                
                 System.out.println("DS demandeInte");
                 status.addProperty("status", (String) request.getAttribute("status"));
                 JsonObject container = new JsonObject();                         
@@ -135,12 +143,23 @@ public class ActionServlet extends HttpServlet {
 //                
 //                break;
 //            }
-//           case "interventionJour" : {
-//                Action action = new ActionInterventionJour();
-//                action.run(request);
-//                
-//                break;
-//            }
+           case "interventionsEmployeJour" : {
+                Action action = new ActionInterventionsJour();
+                action.run(request);
+                status.addProperty("status", (String) request.getAttribute("status"));
+                JsonObject container = new JsonObject();
+                
+                //container.add("coordEmploye",converter.coordonnesEmployeToJson((Employee) session.getAttribute("employee")));
+                container.add("coordEmploye",converter.coordonnesEmployeToJson((Person)session.getAttribute("utilisateur")));
+                if (((String)request.getAttribute("status")).equals("success")) {
+                    List<Intervention> liste = (List)session.getAttribute("interventionsJour");
+                    container.add("interventionsJour",converter.interventionsJourToJson(liste));
+                }
+                container.add("status",status);
+                out.println(gson.toJson(container));
+                out.close();
+                break;
+            }
         
            }
         }

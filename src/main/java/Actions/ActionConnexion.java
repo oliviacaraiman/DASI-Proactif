@@ -5,6 +5,7 @@
  */
 package Actions;
 
+import fr.insalyon.dasi.entities.Employee;
 import fr.insalyon.dasi.entities.Person;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,6 +29,9 @@ public class ActionConnexion extends Action {
                 }else {
                     req.setAttribute("status", "success");
                     session.setAttribute("utilisateur", personne);
+                    if (personne instanceof Employee) 
+                        session.setAttribute("employe", "true");
+                    else session.setAttribute("employe", "false");
                 }
                 
             //s.register();

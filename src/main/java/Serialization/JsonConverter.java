@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import fr.insalyon.dasi.entities.Employee;
 import fr.insalyon.dasi.entities.Intervention;
 import fr.insalyon.dasi.entities.InterventionAnimal;
 import fr.insalyon.dasi.entities.InterventionLivraison;
@@ -37,7 +38,6 @@ public class JsonConverter {
     }
     
     public static JsonArray interventionsClientToJson(List<Intervention> liste) {
-        System.out.println("liste: " + liste.size());
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
         JsonArray jsonListe = new JsonArray();
         for(Intervention i : liste) {
@@ -63,12 +63,50 @@ public class JsonConverter {
                 String animal = ((InterventionAnimal) i).getAnimal();
                 jsonIntervention.addProperty("animal", animal);
             }
-            
-            
             jsonListe.add(jsonIntervention);
         }
         return jsonListe;
     }
     
+    public static JsonObject coordonnesEmployeToJson(Person e) {
+        JsonObject jsonCoordonnesEmploye = new JsonObject();
+        jsonCoordonnesEmploye.addProperty("latEmp", e.getAddress().getGeoCoords().lat);
+        jsonCoordonnesEmploye.addProperty("longEmp", e.getAddress().getGeoCoords().lng);
+        return jsonCoordonnesEmploye;
+    }
+    
+    public static JsonArray interventionsJourToJson(List<Intervention> liste) {
+        JsonArray jsonListe = new JsonArray();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+        for(Intervention i : liste) {
+            JsonObject jsonInterventionsJour = new JsonObject();
+            jsonInterventionsJour.addProperty("lat", i.getClient().getAddress().getGeoCoords().lat);
+            jsonInterventionsJour.addProperty("long", i.getClient().getAddress().getGeoCoords().lng);
+            jsonInterventionsJour.addProperty("type", i.getType());
+            jsonInterventionsJour.addProperty("date", sdf.format(i.getStartDate()));
+            jsonInterventionsJour.addProperty("client", i.getClient().getFirstName() +" "+ i.getClient().getLastName());
+            jsonInterventionsJour.addProperty("description", i.getDescription());
+            if (i.getEndDate() != null) {
+                jsonInterventionsJour.addProperty("statut", "Fini");
+                jsonInterventionsJour.addProperty("dateFin", sdf.format(i.getEndDate()));
+            } else {
+                jsonInterventionsJour.addProperty("statut", "En cours");
+                jsonInterventionsJour.addProperty("dateFin", "");
+            }
+            
+            if (i instanceof InterventionLivraison) {
+                String objet = ((InterventionLivraison) i).getSubject();
+                jsonInterventionsJour.addProperty("objet", objet);
+                String entreprise = ((InterventionLivraison) i).getCompany();
+                jsonInterventionsJour.addProperty("entreprise", entreprise);
+            } else if (i instanceof InterventionAnimal) {
+                String animal = ((InterventionAnimal) i).getAnimal();
+                jsonInterventionsJour.addProperty("animal", animal);
+            }
+
+            jsonListe.add(jsonInterventionsJour);
+        }
+        return jsonListe;
+    }
     
 }
