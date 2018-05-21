@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Service Employe</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="jquery.cookie.js"></script>
+        
+        <!--
+         <script>
+            console.log($.cookie('user'));
+            console.log($.cookie('user')== undefined);
+            if($.cookie('user') == undefined) 
+                window.location.replace("index.html");
+        </script>
+        -->
+    </head>
+    <body>
+        <!--Onglets de Navigation-->
+         <table>
+            <td><button id="bouton-futur">Interventions à effectuer</button>   </td>
+            <td><button id="bouton-passe">Mes anciennes interventions</button>   </td>
+            <td><button id="bouton-present">Carte de interventions du jour</button>   </td>
+        </table>
+        
+       <!--Remplissage avec le Service des Interventions Futures-->
+        <!--<table>
+            <td><button id="bouton-toggle1">+</button>
+        <h3> Type | Date | Client </h3>
+        <button id="bouton-V1"> Fini ! </button></td></table>
+        <div id="Detail1">
+        
+            <h4>Description :</h4>
+
+        </div>
+        <table><td><button id="bouton-toggle2">+</button>
+        <h3> Type | Date | Client </h3>
+        <button id="bouton-V2"> Fini ! </button></td></table>
+        <div id="Detail2">
+        
+            <h4>Description :</h4>
+
+           
+        </div>
+        <table><td><button id="bouton-toggle3">+</button>
+        <h3> Type | Date | Client </h3>
+        <button id="bouton-V3"> Fini ! </button></td></table>
+        <div id="Detail3">
+        
+            <h4>Description :</h4>
+
+         
+        </div>-->
+       
+       <ul id='Intervention1'></ul>
+       <ul id='Intervention2'></ul>
+       <ul id='Intervention3'></ul>
+       <ul id='Intervention4'></ul>
+        <div id="message"></div>
+       
+        <div id='Attestation'>
+            <h2>Attestation de fin d'intervention</h2>
+            <table>
+                <td><h3>    Statut*    </h3>
+                <form>
+                        <select name="Statut" id="statut">
+                            <option>Echec
+                            <option>Succès
+                        </select>
+                </form>
+                </td>
+ 
+                <td> 
+                    <!--Afficher la date par défaut, Changer méthode de selection-->
+                     <label for="dateFin">Date de Fin: </label> 
+                    <input type='date' name="dateFin" id="champ-date"><br>
+                    <label for="heureFin">Heure de Fin: </label> 
+                    <input type='time' name="heureFin" id="champ-heure"></td>
+        
+                   
+            </table>
+            <h3>Commentaire</h3>
+            <textarea name="textarea" id="description" rows="10" cols="50" >
+
+            </textarea>
+            <table>
+                <td><button id="bouton-annuler">  Annuler  </button></td>
+                <td><button id="bouton-envoyer">  Envoyer  </button></td>
+            </table>
+            
+        </div>
+        
+       
+       
+        <script>
+        
+        function envoyerIntervention() {
+            var statut = $('#Statut').val();
+                var date = $('#dateFin').val();
+                var heure = $('#heureFin').val();
+                var commentaire = $('#textarea').val();
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'completerAttestation',
+                        type: type,
+                        date: date,
+                        heure: heure,
+                        commentaire: commentaire
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    var status = JSON.stringify(data.status);
+                    console.log(status);
+                    console.log(status.indexOf("success"));
+
+                    if (status.indexOf("success") >= 0) {
+                        alert("Votre résultat a été prise en compte.");
+                        
+                       
+                    } else if (status.indexOf("fail") >= 0) {
+                        alert("Erreur");
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. ");
+                });
+                 
+            
+        }
+       function ajouterIntervention() {
+           for(var k=1;k<5;k++){
+                 $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'interventionEmploye',
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                   $('#liste-personnes').empty();
+                    var status = JSON.stringify(data.statusInterventions);
+                    
+                    if (status.indexOf("success") >= 0) {
+                        var intervention = data.intervention;
+
+                        
+                            $('#Intervention'+k).append('<li>'+'<button id='+ i +'boutonDetails>'+ 'Show details '+'</button>   ' +intervention.type+" | "+intervention.date+ " | " + 
+                                    intervention.client +'<br/>' + '<div id="'+i+ '"></div>'
+                                    );
+                            
+                           // $('#'+i+'boutonDetails').append("dkjnfejw");
+                            //$('#'+i).hide();
+                            
+                            $('#'+i+'boutonDetail').on('click', function () {
+                                console.log(i);
+                                if(intervention.type.indexOf("Livraison")>=0){
+                                        $('#'+i).append('Objet: '+intervention.objet+ '<br/>' + 'Entreprise: ' + intervention.entreprise+ '<br/>' );
+                                } else if (intervention.type.indexOf("Animal")>=0){
+                                        $('#'+i).append('Animal: '+intervention.animal + '<br/>');
+                                }
+
+                                $('#Intervention'+k).append('Description: '+intervention.description+'</li>');
+                            });
+                        
+                    } else if (status.indexOf("fail") >= 0) {
+                        //alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
+                        $('#message').html("Vous n'avez aucune intervention à effectuer pour le moment.");
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+            }    
+            }     
+       
+        
+        $(document).ready(function(){
+            $('#Attestation').hide();
+            $('#Detail1').hide();
+            $('#Detail2').hide();
+            $('#Detail3').hide();
+             $('#afficherIntervention').toggle(); 
+             
+             $('#bouton-toggle1').on('click', function () {
+                     $('#Detail1').toggle();
+                });
+             $('#bouton-toggle2').on('click', function () {
+                     $('#Detail2').toggle();
+                });
+             $('#bouton-toggle3').on('click', function () {
+                     $('#Detail3').toggle();
+                });
+             $('#bouton-present').on('click', function () {
+                     window.location = "employeInterventionJour.html";
+                });
+             $('#bouton-passe').on('click', function () {
+                     window.location = "employeAncienne.html";
+                });
+             $('#bouton-V1').on('click', function () {
+                     $('#Attestation').show();
+                });
+             $('#bouton-V2').on('click', function () {
+                     $('#Attestation').show();
+                });
+             $('#bouton-V3').on('click', function () {
+                     $('#Attestation').show();
+                });
+             $('#bouton-annuler').on('click', function () {
+                     $('#Attestation').hide();
+                });
+             $('#bouton-envoyer').on('click', function () {
+                  $('#envoyerIntervention').toggle();   
+                });
+        });
+        </script>
+    
+    
+    </body>
+    
+   
+
+    
+</html>

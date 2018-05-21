@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Service Employe</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="jquery.cookie.js"></script>
+        
+        <!--
+         <script>
+            console.log($.cookie('user'));
+            console.log($.cookie('user')== undefined);
+            if($.cookie('user') == undefined) 
+                window.location.replace("index.html");
+        </script>
+        -->
+        
+    </head>
+    <body>
+        <!--Onglets de Navigation-->
+         <table>
+            <td><button id="bouton-futur">Interventions à effectuer</button>   </td>
+            <td><button id="bouton-passe">Mes anciennes interventions</button>   </td>
+            <td><button id="bouton-present">Carte de interventions du jour</button>   </td>
+        </table>
+        
+       <!--Remplissage avec le Service des Interventions Anciennes-->
+       <!-- <table>
+            <td><button id="bouton-toggle1">+</button>
+        <h3> Type | Date | Client </h3>
+       </td></table>
+        <div id="Detail1">
+        
+            <h4>Description :</h4>
+
+        </div>
+        <table><td><button id="bouton-toggle2">+</button>
+        <h3> Type | Date | Client </h3>
+        </td></table>
+        <div id="Detail2">
+        
+            <h4>Description :</h4>
+
+           
+        </div>
+        <table><td><button id="bouton-toggle3">+</button>
+        <h3> Type | Date | Client </h3>
+        </td></table>
+        <div id="Detail3">
+        
+            <h4>Description :</h4>
+
+         
+        </div>
+        <table><td><button id="bouton-toggle4">+</button>
+        <h3> Type | Date | Client </h3>
+        </td></table>
+        <div id="Detail4">
+        
+            <h4>Description :</h4>
+
+         
+        </div>-->
+        
+        <ul id='listeInterventions'></ul>
+        <div id="message"></div>
+        
+        <script>
+        
+       function ajouterIntervention() {
+                 $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'interventionsFinies',
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                   $('#liste-personnes').empty();
+                    var status = JSON.stringify(data.statusInterventions);
+                    
+                    if (status.indexOf("success") >= 0) {
+                        var interventions = data.interventions;
+
+                        for (var i = 0; i < interventions.length; i++) {
+                            var intervention = interventions[i];
+                            $('#listeInterventions').append('<li>'+'<button id='+ i +'boutonDetails>'+ 'Show details '+'</button>   ' +intervention.type+" | "+intervention.date+ " | " + 
+                                    intervention.client +'<br/>' + '<div id="'+i+ '"></div>'
+                                    );
+                            
+                           // $('#'+i+'boutonDetails').append("dkjnfejw");
+                            //$('#'+i).hide();
+                            
+                            $('#'+i+'boutonDetails').on('click', function () {
+                                console.log(i);
+                                if(intervention.type.indexOf("Livraison")>=0){
+                                        $('#'+i).append('Objet: '+intervention.objet+ '<br/>' + 'Entreprise: ' + intervention.entreprise+ '<br/>' );
+                                } else if (intervention.type.indexOf("Animal")>=0){
+                                        $('#'+i).append('Animal: '+intervention.animal + '<br/>');
+                                }
+
+                                $('#listeInterventions').append('Description: '+intervention.description+'</li>');
+                            });
+                        }
+                    } else if (status.indexOf("fail") >= 0) {
+                        //alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
+                        $('#message').html("Vous n'avez pas encore effectué d'intervention.");
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+                 
+            }
+        
+        $(document).ready(function(){
+            $('#Detail1').hide();
+            $('#Detail2').hide();
+            $('#Detail3').hide();
+            $('#Detail4').hide();
+            $('#ajouterIntervention').toggle(); 
+             
+             $('#bouton-toggle1').on('click', function () {
+                     console.log("Detail1");
+                     $('#Detail1').toggle();
+                });
+             $('#bouton-toggle2').on('click', function () {
+                 console.log("Detail2");
+                     $('#Detail2').toggle();
+                });
+             $('#bouton-toggle3').on('click', function () {
+                 console.log("Detail3");
+                     $('#Detail3').toggle();
+                });
+             $('#bouton-toggle4').on('click', function () {
+                 console.log("Detail4");
+                     $('#Detail4').toggle();
+                });
+             $('#bouton-present').on('click', function () {
+                 console.log("Jour");
+                     window.location = "employeInterventionJour.html";
+                });
+             $('#bouton-futur').on('click', function () {
+                 console.log("Futur");
+                 window.location = "employeFutur.html"; 
+                });
+        });
+        </script>
+    
+    
+    </body>
+    
+   
+
+    
+</html>

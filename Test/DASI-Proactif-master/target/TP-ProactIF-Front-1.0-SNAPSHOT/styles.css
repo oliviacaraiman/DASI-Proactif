@@ -1,0 +1,140 @@
+@import "compass/css3";
+
+body, option {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    padding: 0 5%;
+}
+#deconnexion {
+    float: top;
+    float : right;
+}
+/*page connexion*/
+.connexion,.reinit, .inscription {
+    width: 60%;
+    padding: 0 35%;
+    font-size: 18px;
+}
+#logo {
+    padding: 0 7%;
+    /*margin-left: 40%;*/
+}
+input[type="text"], input[type="password"], input[type="date"], input[type="time"] {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    border-radius: 2px;
+    border : 2px solid darkgrey;
+    width : 200px;
+}
+
+#bouton-connexion, #bouton-reinit, #bouton-inscription, #bouton-reinitialisation,
+#bouton-demande, #bouton-annulation{
+    background-color: #666699;
+    color: white;
+    padding: 10px 14px;
+    margin: 10px 3% 0 0;
+    border: none;
+    cursor: pointer;
+    width: 25%;
+    border-radius: 8px;
+    font-size: 16px;
+}
+#bouton-connexion:hover, #bouton-reinit:hover,#bouton-reinitialisation:hover, #bouton-inscription:hover, 
+#bouton-demande:hover, #bouton-annulation:hover{
+    opacity: 0.8;
+}
+
+#map {
+    float:left; float:top; display:inline; 
+}
+#espaceMessage {
+    visibility: hidden;
+    display:inline;
+    /*    float:top; */
+    margin-left: 30px;
+    margin-top: 50px;
+    padding: 5px 10px 5px 10px;
+    background-color: mistyrose;
+    border: 2px solid #ff0000;
+}
+/*Liste interventions*/
+#liste {
+    /*height: 40%; width: 60% ;*/
+    float:right; float:top; display:inline; 
+    position: relative;
+    top: 0px;
+    bottom: 20px;
+    left: 0px;
+    right: 0px;
+    overflow: scroll;
+    margin: 0px;
+    padding: 0px;
+    border: 2px solid #ccc;
+    -webkit-overflow-scrolling: touch;
+}
+
+li {
+    list-style: none;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+    &:last-child {
+        border-bottom: none;
+    }
+    background-color: #efeff5;
+}
+li:hover {
+    background-color: #d1d1e0;
+}
+li.active{
+    background-color: 	#c6ecc6;
+}
+li.activeScroll{
+    background-color: lightblue;
+}
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    margin-bottom: 20px;
+}
+
+/* Onglets */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 16px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+.tab button:hover {
+    background-color: #ddd;
+}
+#interventionDemande {
+    background-color: #cccccc
+}
+#demanderIntervention {
+    background-color: #e6e6e6;
+    padding: 5px 15px 15px 15px
+
+}
+#demande {
+    display: inline-block;
+    margin-left: 10px
+}
+#bouton-toggle{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid;
+    margin: 0px 0;
+    font-size: 20px;
+    border-radius: 50%;
+    padding: 1 1;
+}
+#bouton-toggle:hover{ 
+    background-color: #bfbfbf
+}
+
+
