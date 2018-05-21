@@ -4,48 +4,48 @@
     <head>
         <title>Page Inscription</title>
         <meta charset="UTF-8">
-        
+
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
         <div class="inscription">
-        <img src="img/logo.PNG" alt="logo" id="logo" height="100" width ="130">
-        <h2>Formulaire d'inscription</h2>
-                Civilite:
-                <form>
-                    <select name="civilite" id="civilite">
-                        <option>Monsieur
-                        <option>Madame
-                    </select>
-                </form>
-                Prenom:
-                <input type="text" id="champ-prenom" name="prenom"><br>
-                Nom:   
-                <input type="text" name="nom" id="champ-nom"><br>
-                Date de Naissance (jj/MM/yyyy):
-                <input type="text" name="dateNaissance" id="champ-date"><br>
-                Numero Telephone:
-                <input type="text" name="num" id="champ-num"><br>
-                Adresse email:
-                <input type="text" name="mail" id="champ-mail"><br>
-                Mot de passe:
-                <input type="password" name="prenom" id="champ-mdp"><br>
-                Adresse 1:
-                <input type="text" name="adresse1" id="champ-ad1"><br>
-                Adresse 2:
-                <input type="text" name="adresse2" id="champ-ad2"><br>
-                Code postal:
-                <input type="text" name="zipCode" id="champ-zip"><br>
-                Ville: 
-                <input type="text" name="ville" id="champ-ville"><br>
-                Pays:
-                <input type="text" name="pays" id="champ-pays"><br>
-     
-        <button id="bouton-inscription">S'inscrire</button><br>   
-        <button id="bouton-reinitialisation">Reinitialiser</button><br>   
-        <a href="index.html">Accueil</a>
-        <div id="message"></div>
+            <img src="img/logo.PNG" alt="logo" id="logo" height="100" width ="130">
+            <h2>Formulaire d'inscription</h2>
+            Civilite:
+            <form>
+                <select name="civilite" id="civilite">
+                    <option>Monsieur
+                    <option>Madame
+                </select>
+            </form>
+            Prenom:
+            <input type="text" id="champ-prenom" name="prenom"><br>
+            Nom:   
+            <input type="text" name="nom" id="champ-nom"><br>
+            Date de Naissance (jj/MM/yyyy):
+            <input type="text" name="dateNaissance" id="champ-date"><br>
+            Numero Telephone:
+            <input type="text" name="num" id="champ-num"><br>
+            Adresse email:
+            <input type="text" name="mail" id="champ-mail"><br>
+            Mot de passe:
+            <input type="password" name="prenom" id="champ-mdp"><br>
+            Adresse 1:
+            <input type="text" name="adresse1" id="champ-ad1"><br>
+            Adresse 2:
+            <input type="text" name="adresse2" id="champ-ad2"><br>
+            Code postal:
+            <input type="text" name="zipCode" id="champ-zip"><br>
+            Ville: 
+            <input type="text" name="ville" id="champ-ville"><br>
+            Pays:
+            <input type="text" name="pays" id="champ-pays"><br>
+
+            <button id="bouton-inscription">S'inscrire</button><br>   
+            <button id="bouton-reinitialisation">Reinitialiser</button><br>   
+            <a href="index.html">Accueil</a>
+            <div id="message"></div>
         </div>
         <script>
 
@@ -74,7 +74,7 @@
                         lastName: champNom,
                         birthdate: champDateNaissance,
                         phonenumber: champTelephone,
-                        email : champMail,
+                        email: champMail,
                         password: champMotDePasse,
                         address1: champAdresse1,
                         address2: champAdresse2,
@@ -85,18 +85,18 @@
                     dataType: 'json'
                 }).done(function (data) {
                     var status = JSON.stringify(data.status);
-                    if (status.indexOf("success")>0) {
-                        alert('Votre inscription a réussi. Vous allez recevoir un mail confirmant votre inscription.'); 
+                    if (status.indexOf("success") > 0) {
+                        alert('Votre inscription a réussi. Vous allez recevoir un mail confirmant votre inscription.');
                         $('#message').html('Inscription OK!');
                         window.location = "index.html";
-                    } else if (status.indexOf("fail")>0) {
+                    } else if (status.indexOf("fail") > 0) {
                         alert("Erreur : L'adresse mail saisie est déjà utilisé ou l'adresse n'est pas géolocalisable. Veuillez recommencer !");
                         $('#message').html("Erreur : L'adresse mail saisie est déjà utilisé ou l'adresse n'est pas géolocalisable. Veuillez recommencer ! ");
                     }
 
-                }).fail(function() {
-         
-                   $('#message').html("Erreur serveur : Echec de l'inscription. Veuillez recommencer ! ");
+                }).fail(function () {
+
+                    $('#message').html("Erreur serveur : Echec de l'inscription. Veuillez recommencer ! ");
                 });
             }
 
@@ -104,35 +104,23 @@
                 // ajout d'un "handler" sur le clic du bouton de connexion
                 $('#bouton-inscription').on('click', function () {
                     var valide = true;
-                    $('input[type="text"],input[type="password"]').each(function() {
-	            if ($.trim($(this).val()) == '') {
-	                valide = false;
-	                $(this).css({
-	                    "border": "1px solid red",
-	                    "background": "#FFCECE"
-	                });
-	            }
-	            else {
-	                $(this).css({
-	                    "border": "",
-	                    "background": ""
-	                });
-	            }
-	        });
-	        if (valide == false)
-	            e.preventDefault();
-	        else
-                    $('#bouton-inscription').removeAttr(':disabled')
-                    inscription();
+                    $('input[type="text"],input[type="password"]').each(function () {
+                        if ($.trim($(this).val()) == '') {
+                            valide = false;
+                            $(this).css({"border": "1px solid red", "background": "#FFCECE"});
+                        }
+                    });
+                    if (valide == true)
+                        inscription();
                 });
             });
-            
+
             $('#bouton-reinitialisation').on('click', function () {
-                $('input[type="text"],input[type="password"]').each(function() {
-	            $(this).val('');
-	         });
+                $('input[type="text"],input[type="password"]').each(function () {
+                    $(this).val('');
+                });
             });
-            
+
         </script>
     </body>
 </html>
