@@ -18,6 +18,10 @@ body {
     padding: 0 7%;
     /*margin-left: 40%;*/
 }
+.cacheDetails {
+   
+}
+
 #bouton-connexion, #bouton-reinit, #bouton-inscription, #bouton-reinitialisation,
 #bouton-demande, #bouton-annulation{
     background-color: #666699;
@@ -39,6 +43,7 @@ body {
     float:left; float:top; display:inline; 
 }
 #espaceMessage {
+    visibility: hidden;
     display:inline;
 /*    float:top; */
     margin-left: 30px;
@@ -49,16 +54,16 @@ body {
 }
 /*Liste interventions*/
 #liste {
-    height: 40%; width: 35% ;
+    /*height: 40%; width: 60% ;*/
     float:right; float:top; display:inline; 
     position: relative;
     top: 0px;
     bottom: 20px;
     left: 0px;
-    right: 20px;
+    right: 0px;
     overflow: scroll;
     margin: 0px;
-    padding: 20px;
+    padding: 0px;
     border: 2px solid #ccc;
     -webkit-overflow-scrolling: touch;
 }

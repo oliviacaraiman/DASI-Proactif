@@ -12,8 +12,8 @@ and open the template in the editor.
         <style type="text/css">
             html, body { height: 100%; margin: 0; padding: 0; }
             h1 { text-align: center; }
-            #map { height: 80%; width: 60% }
-/*            #liste { height: 30%; width: 35% ; position: absolute; right:0px; top:5%;}*/
+            #map { height: 80%; width: 50% }
+            #liste { height: 35%; width: 45% ; position: absolute; right:0px; top:5%;}
         </style>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <link rel="stylesheet" href="styles.css">
@@ -39,11 +39,13 @@ and open the template in the editor.
             var markers = [];
             var precedentIndex;
             var precedentIndexMouseover;
-           // var detailsOpened= 0;
+            var detailsOpened= false;
+            var nbInterventions;
             
             function afficherInterventions() {
 
                 var interventions = arguments[0];
+                nbInterventions = interventions.length;
                 for (var i = 0; i < interventions.length; i++) {
                     var intervention = interventions[i];
                     $('#liste').append('<li>' + '<button id=' + i + 'boutonDetails>' + ' Details ' + '</button>   ' + intervention.type + " | " + intervention.date + " | " +
@@ -59,14 +61,18 @@ and open the template in the editor.
 
                     $('#' + i).append('Description: ' + intervention.description);
                     $('#' + i).hide();
+                    $('#' + i).addClass('cacheDetails');
                     $('#liste').append('</li>');
 
                     $('#' + i + 'boutonDetails').on('click', function () {
                         var idDiv = (this.id.toString()).substr(0, 1);
+                        $('#' + idDiv).removeClass('cacheDetails');
+                        $('.cacheDetails').hide();
                         $('#' + idDiv).toggle();
+                        $('#' + idDiv).addClass('cacheDetails');
                         if ($('#' + idDiv).is(":visible"))
-                            detailsOpened = detailsOpened+ 1 ;
-                        else detailsOpened = detailsOpened-1;
+                            detailsOpened = true ;
+                        else detailsOpened = false;
                     });
                 }
 
@@ -74,12 +80,10 @@ and open the template in the editor.
                     $('li').removeClass("active");
                     $(this).addClass("active");
                     var index = $(this).index();
-
                     googleMapInstance.setCenter({lat: interventions[index].lat, lng: interventions[index].long});
                     if (precedentIndex != null) markers[precedentIndex].setIcon({url: './img/red_Marker.png'});
                     markers[index].setIcon({url: './img/green_Marker.png'});
                     precedentIndex = index;
-                    
                 });
             }
 
@@ -110,7 +114,7 @@ and open the template in the editor.
                     if (status.indexOf("success") >= 0) {
                         //recuperation des coordonnees des interventions du jour
                         var interventions = data.interventionsJour;
-                        $('#espaceMessage').css({"visibility":"hidden"});
+                        
                         afficherInterventions(interventions);
                         for (var i = 0; i < interventions.length; i++) {
                             var latitude = interventions[i].lat;
@@ -135,8 +139,9 @@ and open the template in the editor.
                                 var listItem = ($("li").eq(index));
                                 listItem.addClass("activeScroll");
                                 var diff =  -($("#liste").height())/2+ listItem.offset().top;
-                                if (detailsOpened === 0)
-                                $("#liste").animate({scrollTop:diff})
+                                
+                                if (detailsOpened === false)
+                                $("#liste").animate({scrollTop:listItem.offset().top})
                             });
                             
                             //revient à la couleur initialle
@@ -148,9 +153,6 @@ and open the template in the editor.
                             
                             //afichage des détails d'une intervention sur click sur le marker
                             markers[i].addListener('click', function () {
-//                                for (j=0; j<i; j++) markers[i].set
-                                
-
                                 if (precedentIndex != null) markers[precedentIndex].setIcon({url: './img/red_Marker.png'});
                                 var index= markers.indexOf(this);
                                 markers[index].setIcon({url: './img/green_Marker.png'});
@@ -159,32 +161,23 @@ and open the template in the editor.
                                 listItem.removeClass("activeScroll");
                                 listItem.addClass("active");
                                 //centre l'intervention dans la liste
-                               var diff =  -($("#liste").height())/2+ listItem.offset().top;
-                                $("#liste").animate({scrollTop:diff})
-//                                //detailsOpened = detailsOpened + 1;
-                                
+                                var diff =  -($("#liste").height())/2+ listItem.offset().top;
+                                $("#liste").animate({scrollTop:listItem.offset().top})
+                             
                                 // ferme les détails des autres interventions
-                                if (detailsOpened !== 0) {
-                                    for (j=0; j<i; j++) 
-                                        $('#' + j).hide();
-                                    detailsOpened = 0;
-                                  //  if ($('#' + index).is(":visible")) detailsOpened = 1;
-                                } 
-                                    
-                                $('#' + index).show();
-                                detailsOpened = 1 ;
-//                                if ($('#' + index).is(":visible")) {
-//                                    detailsOpened = detailsOpened+ 1 ;
-//                                }
-//                                    else detailsOpened = detailsOpened-1;
-//                                
-                                console.log(detailsOpened);
+                                $('#' + index).removeClass('cacheDetails');
+                                $('.cacheDetails').hide();
+                                $('#' + index).toggle();
+                                $('#' + index).addClass('cacheDetails');
+                                if ($('#' + index).is(":visible")) detailsOpened = true
+                                else detailsOpened = false;
                                 precedentIndex = index;
                             });
                         }
 
                     } 
                     else if (status.indexOf("fail") >= 0) {
+                        $('#espaceMessage').css({"visibility":"visible"});
                         $('#espaceMessage').html("Il n'y a pas encore de demandes d'intervention pour aujourd'hui.");
                         $('#liste').css({"visibility":"hidden"});
                     }
@@ -198,55 +191,15 @@ and open the template in the editor.
                     content: '<div>Information: ' + title + '</div>'
                 });
             }
-
             function attachInfoWindow(marker, infowindow, htmlDescription) {
                 marker.addListener('click', function () {
-
                     infowindow.setContent(htmlDescription);
                     infowindow.open(googleMapInstance, this);
                 });
             }
-
             function initMap() {
                 geolocaliserInterventions();
-
-                // Simuler un appel AJAX (attente 5s)
-//                setTimeout(
-//                        generateMarkers,
-//                        5000
-//                        );
             }
-//
-//            function generateMarkers() {
-//
-//                // Petite popup Google Maps
-//                var infowindow = makeInfoWindow('');
-//
-//                var position = {lat: 45.782122, lng: 4.872735};
-//
-//                for (var i = 0; i < 100; i++) {
-//
-//                    var iconImage = null; // marker par défaut
-//                    if (i % 2 === 0) {
-//                        // image pour marker personnalisé
-//                        iconImage = {url: './image/UnderConstruction.png', scaledSize: new google.maps.Size(32, 32)}
-//                    }
-//
-//                    var marker = new google.maps.Marker({
-//                        map: googleMapInstance,
-//                        position: {lat: position.lat + (Math.random() - 0.5) / 10.0, lng: position.lng + 2 * (Math.random() - 0.5) / 10.0},
-//                        title: 'Endroit #' + i,
-//                        icon: iconImage
-//                    });
-//
-//                    attachInfoWindow(
-//                            marker, infowindow,
-//                            '<div><strong><a href="./endroit.html?' + i + '">Endroit #' + i + '</a></strong><br/>Ceci est l\'endroit charmant numéro ' + i + '<br/>' + 'Incroyable !' + '</div>'
-//                            );
-//                }
-//
-//            } 
-
         </script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAklw96N9rLd93ubr-F04CN7qi2ryKayAc&callback=initMap">
         </script>
