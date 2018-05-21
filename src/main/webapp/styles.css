@@ -16,7 +16,7 @@ body {
 }
 #logo {
     padding: 0 7%;
-    margin-left: 40%;
+    /*margin-left: 40%;*/
 }
 #bouton-connexion, #bouton-reinit, #bouton-inscription, #bouton-reinitialisation,
 #bouton-demande, #bouton-annulation{

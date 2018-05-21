@@ -39,7 +39,7 @@ and open the template in the editor.
             var markers = [];
             var precedentIndex;
             var precedentIndexMouseover;
-            var detailsOpened= 0;
+           // var detailsOpened= 0;
             
             function afficherInterventions() {
 
@@ -74,13 +74,6 @@ and open the template in the editor.
                     $('li').removeClass("active");
                     $(this).addClass("active");
                     var index = $(this).index();
-//                    
-//                     if (detailsOpened !== 0) {
-//                        for (j=0; j<i, j!=index; j++) 
-//                            $('#' + j).hide();
-//                         detailsOpened = 0;
-//                                  //  if ($('#' + index).is(":visible")) detailsOpened = 1;
-//                        }
 
                     googleMapInstance.setCenter({lat: interventions[index].lat, lng: interventions[index].long});
                     if (precedentIndex != null) markers[precedentIndex].setIcon({url: './img/red_Marker.png'});
@@ -117,6 +110,7 @@ and open the template in the editor.
                     if (status.indexOf("success") >= 0) {
                         //recuperation des coordonnees des interventions du jour
                         var interventions = data.interventionsJour;
+                        $('#espaceMessage').css({"visibility":"hidden"});
                         afficherInterventions(interventions);
                         for (var i = 0; i < interventions.length; i++) {
                             var latitude = interventions[i].lat;

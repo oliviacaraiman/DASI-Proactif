@@ -35,19 +35,15 @@
 
                     dataType: 'json'
                 }).done(function (data) {
-                    // dataType 
-                    // ici votre code...
                     var status = JSON.stringify(data.status);
                     console.log(status);
                     console.log(status.indexOf("success"));
 
                     if (status.indexOf("success") >= 0) {
                         var personne = data.utilisateur;
-                        $('#message').html('OK ! User : ' + personne.nom + ' ' + personne.prenom);
                         $.cookie('user', personne.mail, {expires: 1});
                         console.log($.cookie('user'));
                         var user = $.cookie('user');
-                        //determine si c'est un client ou un employe
                         var emp = JSON.stringify(data.employe);
                         console.log(emp);
                         if (emp.indexOf("true") >= 0)
@@ -60,11 +56,8 @@
                         alert("Erreur : Adresse mail ou mot de passe incorrect! Veuillez recommencer.");
                         $('#message').html('Erreur : Adresse mail ou mot de passe incorrect! Veuillez recommencer. ');
                     }
-                    // window.location = "./maPageSuivante.html";
-                    // si connexion pas ok afficher un texte dans la div message :
-                    //   $('#message').html('Echec de la connexion');
                 }).fail(function () {
-
+                    alert('Erreur serveur: Echec de la connexion');
                     $('#message').html('Erreur serveur: Echec de la connexion');
                 });
             }
