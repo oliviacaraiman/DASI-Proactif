@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Réinitialisation du mot de passe</title>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <h3>Page réinitialiser le mot de passe</h3>
+        <h1>PROACT'IF</h1>
+        Adresse e-mail : <input type="text" id="champ-adresse" name="adress" /><br>
+        <button id="bouton-reinit">Réinitialiser le mot de passe</button>
+        <a href="index.html">Accueil</a>
+        <div id="message"></div>
+        
+        <script>
+
+            function reinitialisation() {
+                var champAdress = $('#champ-adresse').val();
+                $('#message').html('Reinitialisation en cours...');
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        action: 'reinitialisation',
+                        mail: champAdress
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    var status = JSON.stringify(data.status);
+                    console.log(status);
+                    console.log(status.indexOf("success"));
+                    
+                    if (status.indexOf("success")>=0) {
+                        alert("Un nouvel mot de passe a été envoyé sur votre adresse mail.");
+                        window.location = "index.html";
+                    } else if (status.indexOf("fail")>=0) {
+                        alert("Erreur : Adresse mail incorrecte! Veuillez recommencer.");
+                        $('#message').html('Erreur : Adresse mail incorrecte! Veuillez recommencer. ');
+                    }
+                }).fail(function() {
+                   $('#message').html('Erreur serveur: Veuillez recommencer. ');
+                });
+            }
+
+            $(document).ready(function () {
+                $('#bouton-reinit').on('click', function () {
+                    reinitialisation();
+                }); 
+            });
+            
+        </script>
+    </body>
+</html>

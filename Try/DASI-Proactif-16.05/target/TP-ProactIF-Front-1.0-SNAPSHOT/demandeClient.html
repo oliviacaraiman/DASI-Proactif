@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Mes demandes d'intervention</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="jquery.cookie.js"></script>
+        
+        
+        <script>
+            console.log($.cookie('user'));
+            console.log($.cookie('user')== undefined);
+            if($.cookie('user') == undefined) 
+                window.location.replace("index.html");
+        </script>
+        
+        
+    </head>
+    <body>
+        <h1>Mes demandes d'intervention</h1>
+        <!--Premier menu en accordeon-->
+        <button id="bouton-toggle">+</button>
+        <h2>Demander une intervention</h2>
+        <div id="demanderIntervention"> 
+            <table>
+                <td>Type*:
+                    <form>
+                        <select name="Type" id="type">
+                            <option>Livraison
+                            <option>Animal
+                            <option>Incident
+                        </select>
+                    </form></td>
+                <!--<td>Date de début souhaitée (HH:MM jj/MM/yyyy): <br>-->
+                    <td>
+                    <!--<div align="right">-->
+                    <label for="datedebut">Date du debut*: </label> 
+                    <input type='date' name="datedebut" id="champ-date"><br>
+                    <label for="heuredebut">Heure du debut*: </label> 
+                    <input type='time' name="heuredebut" id="champ-heure"></td>
+            </table>
+
+            <div id='livraison'>
+                Champ supplémentaire 1 (e.g. Objet)*:
+                <input type="text" name="champObjet" id="champObjet"><br>
+                Champ supplémentaire 2 (e.g. Entreprise)*:
+                <input type="text" name="champEntreprise" id="champEntreprise"><br>
+            </div>
+
+            <div id='animal' >
+                Animal*:
+                <input type="text" name="champAnimal" id="champAnimal"><br>
+            </div>
+            Description*: <br>
+            <textarea name="textarea" id="description" rows="10" cols="50" >
+
+            </textarea>
+            <br>
+            <table>
+                <td><button id="bouton-demande">Demander l'intervention</button>   </td>
+                <td> <button id="bouton-annulation">Annuler</button>    </td>
+            </table>
+        </div>
+        <script>
+             function ajouterIntervention() {
+                 $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'listeInterventionsClient',
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                   $('#liste-personnes').empty();
+                    var status = JSON.stringify(data.statusInterventions);
+                    
+                    if (status.indexOf("success") >= 0) {
+                        var interventions = data.interventions;
+
+                        for (var i = 0; i < interventions.length; i++) {
+                            var intervention = interventions[i];
+                            $('#listeInterventions').append('<li>'+'<button id='+ i +'boutonDetails>'+ 'Show details '+'</button>   ' +intervention.type+" | "+intervention.date+ " | " + 
+                                    intervention.employe+ " | " +intervention.statut+ " | "  + intervention.dateFin +'<br/>' + '<div id="'+i+ '"></div>'
+                                    );
+                            
+                           // $('#'+i+'boutonDetails').append("dkjnfejw");
+                            //$('#'+i).hide();
+                            
+                            $('#'+i+'boutonDetails').on('click', function () {
+                                console.log(i);
+                                if(intervention.type.indexOf("Livraison")>=0){
+                                        $('#'+i).append('Objet: '+intervention.objet+ '<br/>' + 'Entreprise: ' + intervention.entreprise+ '<br/>' );
+                                } else if (intervention.type.indexOf("Animal")>=0){
+                                        $('#'+i).append('Animal: '+intervention.animal + '<br/>');
+                                }
+
+                                $('#listeInterventions').append('Description: '+intervention.description+'</li>');
+                            });
+                        }
+                    } else if (status.indexOf("fail") >= 0) {
+                        //alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
+                        $('#message').html("Vous n'avez effectué aucune demande d'intervention.");
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+                 
+            }
+
+            function demandeIntervention() {
+                var type = $('#type').val();
+                var date = $('#champ-date').val();
+                var heure = $('#champ-heure').val();
+                var champEntreprise = $('#champEntreprise').val();
+                var champObjet = $('#champObjet').val();
+                var champAnimal = $('#champAnimal').val();
+                var description = $('#description').val();
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'demanderIntervention',
+                        type: type,
+                        date: date,
+                        heure: heure,
+                        champObjet: champObjet,
+                        champEntreprise: champEntreprise,
+                        champAnimal: champAnimal,
+                        description: description
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    var status = JSON.stringify(data.status);
+                    console.log(status);
+                    console.log(status.indexOf("success"));
+
+                    if (status.indexOf("success") >= 0) {
+                        alert("Votre demande a été prise en compte.");
+                        // aficher l'intervention ds la liste des interventions
+                        $('#demanderIntervention').toggle();
+                        
+                       // ajouterIntervention(); 
+
+                    } else if (status.indexOf("fail") >= 0) {
+                        alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
+//                        $('#message').html('Erreur : Adresse mail incorrecte! Veuillez recommencer. ');
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+            }
+
+            $(document).ready(function () {
+                
+                $('#animal').hide();
+                $('#demanderIntervention').hide();
+
+                $('#bouton-toggle').on('click', function () {
+                    $('#demanderIntervention').toggle();
+                });
+
+                $('#type').on('change', function () {
+//                    console.log("On change : ")
+//                    console.log($(this).val());
+                    if ($(this).val() === 'Livraison') {
+                        $('#livraison').show();
+                        $('#animal').hide();
+                    } else if ($(this).val() === 'Animal') {
+                        $('#livraison').hide();
+                        $('#animal').show();
+                    } else if ($(this).val() === 'Incident') {
+                        $('#livraison').hide();
+                        $('#animal').hide();
+                    }
+                });
+
+                $('#bouton-demande').on('click', function () {
+                    //console.log("Demande");
+                    demandeIntervention();
+                });
+
+                $('#bouton-annulation').on('click', function () {
+                    $('input[type="text"],textarea').each(function () {
+                        $(this).val('');
+                    });
+                    $('#demanderIntervention').toggle();
+                });
+                ajouterIntervention();
+                
+                $('#deconnexion').on('click', function () {
+                    $.removeCookie('user');
+                    window.location = "index.html";
+                });
+            });
+
+        </script>
+
+        <!--Deuxieme menu en accordeon en 4 parties-->
+        <ul id='listeInterventions'></ul>
+        <div id="message"></div>
+        <a href='' id="deconnexion">Se déconnecter</a>
+
+    </body>
+</html>

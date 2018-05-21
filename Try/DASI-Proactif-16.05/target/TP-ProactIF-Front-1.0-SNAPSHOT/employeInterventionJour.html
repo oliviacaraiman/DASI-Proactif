@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Service Employe</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="jquery.cookie.js"></script>
+        
+         <!--
+         <script>
+            console.log($.cookie('user'));
+            console.log($.cookie('user')== undefined);
+            if($.cookie('user') == undefined) 
+                window.location.replace("index.html");
+        </script>
+        -->
+    </head>
+    <body>
+        <!--Onglets de Navigation-->
+         <table>
+            <td><button id="bouton-futur">Interventions à effectuer</button>   </td>
+            <td><button id="bouton-passe">Mes anciennes interventions</button>   </td>
+            <td><button id="bouton-present">Carte de interventions du jour</button>   </td>
+        </table>
+    
+    <!--Affichage Principale-->
+    <table>
+    <td>
+        <!--Remplissage avec le Service des Interventions du Jour-->   
+    </td>
+    <td>   
+     <!--Affichage d'une carte des interventions du jour, centrées sur la position de l'employé par défaut -->
+    </td>
+    </table>
+    
+    <!--Affichage Inférieur-->
+        <div id='messageErreur'>
+            <h4>Il n'y a pas encore de demande d'intervention aujourd'hui.</h4>
+        </div>
+    <script>
+        
+        function afficherInterventions() {
+            
+            
+        }
+        
+        $(document).ready(function(){
+             $('#messageErreur').hide();
+             <!--Afficher ce message si il  y a au moins une demande-->
+             
+             $('#bouton-passe').on('click', function () {
+                 console.log("Passe");
+                     window.location = "employeAncienne.html";
+                });
+             $('#bouton-futur').on('click', function () {
+                 console.log("Futur");
+                 window.location = "employeFutur.html"; 
+                });
+                
+             <!--Affichage de la liste des demandes-->
+             $('#afficherInterventions').toggle();  
+        });
+    </script>
+    
+    
+    </body>
+    
+   
+
+    
+</html>
