@@ -30,7 +30,9 @@
             Adresse email:
             <input type="text" name="mail" id="champ-mail"><br>
             Mot de passe:
-            <input type="password" name="prenom" id="champ-mdp"><br>
+            <input type="password" name="mdp" id="champ-mdp"><br>
+            Confirmer le mot de passe:
+            <input type="password" name="mdpConfirmation" id="champ-confirmation"><br>
             Adresse 1:
             <input type="text" name="adresse1" id="champ-ad1"><br>
             Adresse 2:
@@ -110,15 +112,23 @@
                             $(this).css({"border": "1px solid red", "background": "#FFCECE"});
                         }
                     });
+                    if ($('#champ-mdp').val() !== $('#champ-confirmation').val()) {
+                        valide = false;
+                        $('#champ-mdp').css({"border": "1px solid red", "background": "#FFCECE"});
+                        $('#champ-confirmation').css({"border": "1px solid red", "background": "#FFCECE"});
+                        alert("Les mots de passe ne correspondent pas.");
+                        $("#message").html("Les mots de passe ne correspondent pas.");
+                    }
                     if (valide == true)
                         inscription();
                 });
-            });
+            
 
             $('#bouton-reinitialisation').on('click', function () {
                 $('input[type="text"],input[type="password"]').each(function () {
                     $(this).val('');
                 });
+            });
             });
 
         </script>
