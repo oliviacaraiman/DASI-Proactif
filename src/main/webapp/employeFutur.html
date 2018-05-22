@@ -52,7 +52,7 @@ and open the template in the editor.
 
             </table>
             <h3>Commentaire</h3>
-            <textarea name="textarea" id="description" rows="10" cols="50" ></textarea>
+            <textarea name="textarea" id="description" rows="10" cols="50" ></textarea><br/>
             <button id="bouton-annuler">  Annuler  </button>
             <button id="bouton-envoyer">  Envoyer  </button>
         </div>
@@ -63,8 +63,8 @@ and open the template in the editor.
         
             function envoyerIntervention() {
                 var statut = $('#statut').val();
-                var date = $('#dateFin').val();
-                var heure = $('#heureFin').val();
+                var date = $('#champ-date').val();
+                var heure = $('#champ-heure').val();
                 var commentaire = $('#description').val();
                 console.log("id:"+interventionId);
                 $.ajax({
@@ -72,7 +72,6 @@ and open the template in the editor.
                     method: 'POST',
                     data: {
                         action: 'completerAttestation',
-                        //interventionId : interventionId,
                         statut: statut,
                         date: date,
                         heure: heure,
@@ -114,9 +113,8 @@ and open the template in the editor.
                         interventionId = intervention.id;
                             $('#intervention').append('<button id=boutonDetails>' + '+' + '</button>   ' + intervention.type + " | " + intervention.date + " | " +
                                     intervention.client + '<br/>' + '<div id="details"></div>' +'<button id=bouton-finirIntervention>' + 'Finir' + '</button>');
-//                            $('#intervention').append('<button id=bouton-finirInterventions>' + 'Finir' + '</button>');
                             $('#details').hide();
-                            $('#boutonDetails').on('click', function () {
+                           
                                 if (intervention.type.indexOf("Livraison") >= 0) {
                                     $('#details').append('Objet: ' + intervention.objet + '<br/>' + 'Entreprise: ' + intervention.entreprise + '<br/>');
                                 } else if (intervention.type.indexOf("Animal") >= 0) {
@@ -124,7 +122,6 @@ and open the template in the editor.
                                 }
 
                                 $('#details').append('Description: ' + intervention.description + '</li>');
-                            });
                         $('#boutonDetails').on('click', function () {
                             $('#details').toggle();
                         });

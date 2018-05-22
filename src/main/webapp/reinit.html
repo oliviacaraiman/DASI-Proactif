@@ -7,10 +7,6 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="jquery.cookie.js"></script>
 
-        <script>
-            if ($.cookie('user') == undefined)
-                window.location.replace("index.html");
-        </script>
     </head>
     <body>
         <div class="reinit">
@@ -21,7 +17,7 @@
             <div id="message"></div>
         </div>
         <script>
-
+            
             function reinitialisation() {
                 var champAdress = $('#champ-adresse').val();
                 $('#message').html('Reinitialisation en cours...');

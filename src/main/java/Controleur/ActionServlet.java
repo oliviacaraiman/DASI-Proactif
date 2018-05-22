@@ -98,11 +98,8 @@ public class ActionServlet extends HttpServlet {
             }
            case "demanderIntervention" : {
                System.out.println("DS demandeInte");
-              
                 Action action = new ActionEnvoyerDemande();
                 action.run(request);
-                
-                System.out.println("DS demandeInte");
                 status.addProperty("status", (String) request.getAttribute("status"));
                 JsonObject container = new JsonObject();                         
                 container.add("status",status);
@@ -125,7 +122,6 @@ public class ActionServlet extends HttpServlet {
                 out.close();
                 break;
             }
-//          /*En Cours . . .*/
               case "completerAttestation" : {
                 Action action = new ActionFillAtestation();
                 action.run(request);
@@ -140,7 +136,6 @@ public class ActionServlet extends HttpServlet {
              case "interventionEmploye" : {
                   Action action = new ActionAfficherInterventionEmploye();
                   action.run(request);
-                  System.out.println("DS demandeInterventions " + (String) request.getAttribute("statusInterventions"));
                    status.addProperty("statusInterventions", (String) request.getAttribute("statusInterventions"));
                   JsonObject container = new JsonObject();
                    if (((String)request.getAttribute("statusInterventions")).equals("success")) {
@@ -171,8 +166,6 @@ public class ActionServlet extends HttpServlet {
                 action.run(request);
                 status.addProperty("status", (String) request.getAttribute("status"));
                 JsonObject container = new JsonObject();
-                
-                //container.add("coordEmploye",converter.coordonnesEmployeToJson((Employee) session.getAttribute("employee")));
                 container.add("coordEmploye",converter.coordonnesEmployeToJson((Person)session.getAttribute("utilisateur")));
                 if (((String)request.getAttribute("status")).equals("success")) {
                     List<Intervention> liste = (List)session.getAttribute("interventionsJour");

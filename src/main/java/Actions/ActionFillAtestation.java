@@ -40,7 +40,6 @@ public class ActionFillAtestation extends Action {
         intervention.setEndDate(dateFin);
         if (s.fillAttestation(intervention)) {
             req.setAttribute("status", "success");
-            // session.setAttribute("intervention", intervention);
         } else {
             req.setAttribute("status", "fail");
         }

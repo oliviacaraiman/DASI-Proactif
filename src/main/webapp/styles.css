@@ -26,7 +26,7 @@ input[type="text"], input[type="password"], input[type="date"], input[type="time
 }
 
 #bouton-connexion, #bouton-reinit, #bouton-inscription, #bouton-reinitialisation,
-#bouton-demande, #bouton-annulation, #bouton-envoyer, #bouton-annuler{
+#bouton-demande, #bouton-annulation, #bouton-envoyer, #bouton-annuler, #bouton-finirIntervention{
     background-color: #666699;
     color: white;
     padding: 10px 14px;
@@ -37,8 +37,9 @@ input[type="text"], input[type="password"], input[type="date"], input[type="time
     border-radius: 8px;
     font-size: 16px;
 }
+
 #bouton-connexion:hover, #bouton-reinit:hover,#bouton-reinitialisation:hover, #bouton-inscription:hover, 
-#bouton-demande:hover, #bouton-annulation:hover, #bouton-envoyer:hover, #bouton-annuler:hover{
+#bouton-demande:hover, #bouton-annulation:hover, #bouton-envoyer:hover, #bouton-annuler:hover,#bouton-finirIntervention :hover{
     opacity: 0.8;
 }
 

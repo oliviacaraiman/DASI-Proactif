@@ -21,7 +21,7 @@ and open the template in the editor.
     </head>
 
     <body>
-        <a href='' id="deconnexion">Se déconnecter</a>
+        <a href='index.html' id="deconnexion">Se déconnecter</a>
         <img src="img/logo.PNG" alt="logo" id="logo" height="110" width ="150">
         <h2 >Mes demandes d'intervention</h2>
         <div id ="interventionDemande">
@@ -29,8 +29,6 @@ and open the template in the editor.
             <h3 id="demande">Demander une intervention</h3>
         </div>
         <div id="demanderIntervention"> 
-            <!--            <table>
-                            <td>-->
             Type*:
             <form>
                 <select name="Type" id="type">
@@ -99,8 +97,6 @@ and open the template in the editor.
                                 var idDiv = (this.id.toString()).substr(0, 1);
                                 $('#' + idDiv).toggle();
                             });
-
-
                         }
                     } else if (status.indexOf("fail") >= 0) {
                         $('#message').html("Vous n'avez effectué aucune demande d'intervention.");
@@ -153,15 +149,12 @@ and open the template in the editor.
 
                 $('#animal').hide();
                 $('#demanderIntervention').hide();
-
                 $('#logo').on('click', function () {
                     window.location = "demandeClient.html";
                 });
-
                 $('#bouton-toggle').on('click', function () {
                     $('#demanderIntervention').toggle();
                 });
-
                 $('#type').on('change', function () {
                     if ($(this).val() === 'Livraison') {
                         $('#livraison').show();
@@ -174,33 +167,49 @@ and open the template in the editor.
                         $('#animal').hide();
                     }
                 });
-
                 $('#bouton-demande').on('click', function () {
                     var valide = true;
-                    $('input[type="text"],textarea, input[type="date"], input[type="time"]').each(function () {
+                    $('textarea, input[type="date"], input[type="time"]').each(function () {
                         if ($.trim($(this).val()) == '') {
                             valide = false;
                             $(this).css({"border": "1px solid red", "background": "#FFCECE"});
-                        }
-                        if (valide !== false)
-                            demandeIntervention();
+                        } else $(this).css({"border": "", "background": ""});
                     });
+
+                    if ($('#type').val() == 'Animal') {
+                        if ($('#champAnimal').val() == '') {
+                            $('#champAnimal').css({"border": "1px solid red", "background": "#FFCECE"});
+                            valide = false;
+                        } else $(('#champAnimal')).css({"border": "", "background": ""});
+
+                    } else if ($('#type').val() == 'Livraison') {
+                        if ($('#champObjet').val() == '') {
+                            $('#champObjet').css({"border": "1px solid red", "background": "#FFCECE"});
+                            valide = false;
+                        } else $(('#champObjet')).css({"border": "", "background": ""});
+                        if ($('#champEntreprise').val() == '') {
+                            $(('#champEntreprise')).css({"border": "1px solid red", "background": "#FFCECE"});
+                            valide = false;
+                        } else $(('#champEntreprise')).css({"border": "", "background": ""});
+                    }
+                    if (valide == true) {
+                        demandeIntervention();
+                    }
                 });
-
-
                 $('#bouton-annulation').on('click', function () {
-                    $('input[type="text"],textarea').each(function () {
+                    $('input[type="text"],textarea,input[type="date"], input[type="time"]').each(function () {
                         $(this).val('');
+                        $(this).css({"border": "", "background": ""});
                     });
                     $('#demanderIntervention').toggle();
                 });
                 ajouterIntervention();
-
                 $('#deconnexion').on('click', function () {
                     $.removeCookie('user');
                     window.location = "index.html";
                 });
-            });
+            })
+                    ;
 
         </script>
 
