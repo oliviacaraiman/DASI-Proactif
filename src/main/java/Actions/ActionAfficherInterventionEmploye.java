@@ -5,21 +5,29 @@
  */
 package Actions;
 
+import fr.insalyon.dasi.entities.Intervention;
+import fr.insalyon.dasi.entities.Person;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author mleral
  */
 public class ActionAfficherInterventionEmploye extends Action {
-        @Override
-        public void run(HttpServletRequest req){
-                String nom = req.getParameter("prenom");
-                    //mettre 
-                    // https://www.tutorialspoint.com/servlets/servlets-form-data.htm
-                    
-            
-            
-            //s.register();
+
+    @Override
+    public void run(HttpServletRequest req) {
+             
+        HttpSession session = req.getSession();
+        Person utilisateur = (Person) session.getAttribute("utilisateur");
+        Long idUtilisateur = utilisateur.getId();
+        Intervention intervention = s.getInterventionToDoByEmployee(idUtilisateur);
+        if (intervention != null) {
+            req.setAttribute("statusInterventions", "success");
+            session.setAttribute("intervention", intervention);
+        } else {
+            req.setAttribute("statusInterventions", "fail");
         }
+    }
 }

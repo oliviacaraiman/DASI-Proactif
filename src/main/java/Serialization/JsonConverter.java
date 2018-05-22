@@ -75,6 +75,31 @@ public class JsonConverter {
         return jsonCoordonnesEmploye;
     }
     
+     public static JsonObject interventionToDoByEmployeToJson(Intervention i) {
+         
+         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+         JsonObject jsonIntervention = new JsonObject();
+         jsonIntervention.addProperty("type", i.getType());
+         jsonIntervention.addProperty("id", i.getId());
+            jsonIntervention.addProperty("date", sdf.format(i.getStartDate()));
+            jsonIntervention.addProperty("client", i.getClient().getFirstName() +" "+ i.getClient().getLastName());
+            jsonIntervention.addProperty("description", i.getDescription());
+
+            if (i instanceof InterventionLivraison) {
+                String objet = ((InterventionLivraison) i).getSubject();
+                jsonIntervention.addProperty("objet", objet);
+                String entreprise = ((InterventionLivraison) i).getCompany();
+                jsonIntervention.addProperty("entreprise", entreprise);
+            } else if (i instanceof InterventionAnimal) {
+                
+                String animal = ((InterventionAnimal) i).getAnimal();
+                System.out.println("ici:" +animal);
+                jsonIntervention.addProperty("animal", animal);
+            }
+        
+        return jsonIntervention;
+    }
+    
     public static JsonArray interventionsJourToJson(List<Intervention> liste) {
         JsonArray jsonListe = new JsonArray();
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
@@ -106,6 +131,40 @@ public class JsonConverter {
 
             jsonListe.add(jsonInterventionsJour);
         }
+        return jsonListe;
+    }public static JsonArray interventionsEmployeToJson(List<Intervention> liste) {
+        System.out.println("liste: " + liste.size());
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+        JsonArray jsonListe = new JsonArray();
+       // JsonObject jsonIntervention = new JsonObject();
+        for(Intervention i : liste) {
+            JsonObject jsonIntervention = new JsonObject();
+            jsonIntervention.addProperty("type", i.getType());
+            jsonIntervention.addProperty("date", sdf.format(i.getStartDate()));
+            jsonIntervention.addProperty("client", i.getClient().getFirstName() +" "+ i.getClient().getLastName());
+            jsonIntervention.addProperty("description", i.getDescription());
+            if (i.getEndDate() != null) {
+                jsonIntervention.addProperty("statut", "Fini");
+                jsonIntervention.addProperty("dateFin", sdf.format(i.getEndDate()));
+            } else {
+                jsonIntervention.addProperty("statut", "En cours");
+                jsonIntervention.addProperty("dateFin", "");
+            }
+            
+            if (i instanceof InterventionLivraison) {
+                String objet = ((InterventionLivraison) i).getSubject();
+                jsonIntervention.addProperty("objet", objet);
+                String entreprise = ((InterventionLivraison) i).getCompany();
+                jsonIntervention.addProperty("entreprise", entreprise);
+            } else if (i instanceof InterventionAnimal) {
+                String animal = ((InterventionAnimal) i).getAnimal();
+                jsonIntervention.addProperty("animal", animal);
+            }
+            
+            
+            jsonListe.add(jsonIntervention);
+        }
+        System.out.println("ksmlka: " +jsonListe.size());
         return jsonListe;
     }
     

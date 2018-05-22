@@ -26,7 +26,7 @@ input[type="text"], input[type="password"], input[type="date"], input[type="time
 }
 
 #bouton-connexion, #bouton-reinit, #bouton-inscription, #bouton-reinitialisation,
-#bouton-demande, #bouton-annulation{
+#bouton-demande, #bouton-annulation, #bouton-envoyer, #bouton-annuler{
     background-color: #666699;
     color: white;
     padding: 10px 14px;
@@ -38,7 +38,7 @@ input[type="text"], input[type="password"], input[type="date"], input[type="time
     font-size: 16px;
 }
 #bouton-connexion:hover, #bouton-reinit:hover,#bouton-reinitialisation:hover, #bouton-inscription:hover, 
-#bouton-demande:hover, #bouton-annulation:hover{
+#bouton-demande:hover, #bouton-annulation:hover, #bouton-envoyer:hover, #bouton-annuler:hover{
     opacity: 0.8;
 }
 
@@ -80,7 +80,12 @@ li {
     }
     background-color: #efeff5;
 }
-li:hover {
+#details, #intervention {
+    background-color: #efeff5;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+}
+li:hover, #details:hover {
     background-color: #d1d1e0;
 }
 li.active{
@@ -123,7 +128,7 @@ li.activeScroll{
     display: inline-block;
     margin-left: 10px
 }
-#bouton-toggle{
+#bouton-toggle, #boutonDetails{
     display: inline-block;
     width: 30px;
     height: 30px;

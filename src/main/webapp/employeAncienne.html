@@ -10,6 +10,7 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="styles.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="jquery.cookie.js"></script>
         <script>
             if ($.cookie('user') == undefined)
@@ -17,22 +18,72 @@ and open the template in the editor.
         </script>
     </head>
     <body>
-         <div class="tab">
+        <div class="tab">
             <button id="bouton-futur" onclick="window.location = 'employeFutur.html'">Interventions à effectuer</button>  
             <button id="bouton-passe" onclick="window.location = 'employeAncienne.html'">Mes anciennes interventions</button>
             <button id="bouton-present" onclick="window.location = 'employeInterventionJour.html'">Carte de interventions du jour</button>
         </div>
-        
-        <div>TODO write content</div>
-        
+        <a href='' id="deconnexion">Se déconnecter</a>
+        <ul id='listeInterventions'></ul>
+        <div id="message"></div>
+
         <script>
+
+            function ajouterIntervention() {
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'interventionsFinies',
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    $('#listeInterventions').empty();
+                    var status = JSON.stringify(data.statusInterventions);
+
+                    if (status.indexOf("success") >= 0) {
+                        var interventions = data.interventions;
+
+                        for (var i = 0; i < interventions.length; i++) {
+                            var intervention = interventions[i];
+                            $('#listeInterventions').append('<li>' + '<button id=' + i + 'boutonDetails>' + 'Details ' + '</button>   ' + intervention.type + " | " + intervention.date + " | " +
+                                    intervention.client + " | " + intervention.statut + " | " + intervention.dateFin + '<br/>' + '<div id="' + i + '"></div>'
+                                    );
+                            $('#' + i + 'boutonDetails').css({"background-color": "#3d3d5c", "border": "none", "height": "30px", "color": "white"});
+
+                            if (intervention.type.indexOf("Livraison") >= 0) {
+                                $('#' + i).append('Objet: ' + intervention.objet + '<br/>' + 'Entreprise: ' + intervention.entreprise + '<br/>');
+                            } else if (intervention.type.indexOf("Animal") >= 0) {
+                                $('#' + i).append('Animal: ' + intervention.animal + '<br/>');
+                            }
+
+                            $('#' + i).append('Description: ' + intervention.description);
+                            $('#' + i).hide();
+                            $('#listeInterventions').append('</li>');
+
+                            $('#' + i + 'boutonDetails').on('click', function () {
+                                var idDiv = (this.id.toString()).substr(0, 1);
+                                $('#' + idDiv).toggle();
+                            });
+                        }
+                    } else if (status.indexOf("fail") >= 0) {
+                        //alert("Aucun employé n'est disponible pour le moment. Veuillez réessayer plus tard.");
+                        $('#message').html("Vous n'avez pas encore d'interventions.");
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+
+            }
+
             $(document).ready(function () {
+                ajouterIntervention();
                 $('#deconnexion').on('click', function () {
                     $.removeCookie('user');
                     window.location = "index.html";
                 });
 
             });
-        </script>
+        </script> 
     </body>
 </html>
