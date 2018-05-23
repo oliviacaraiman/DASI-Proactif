@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Inscription</title>
+        <meta charset="UTF-8">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="inscription">
+            <img src="img/logo.PNG" alt="logo" id="logo" height="100" width ="130">
+            <h2>Formulaire d'inscription</h2>
+            Civilite:
+            <form>
+                <select name="civilite" id="civilite">
+                    <option>Monsieur
+                    <option>Madame
+                </select>
+            </form>
+            Prenom:
+            <input type="text" id="champ-prenom" name="prenom"><br>
+            Nom:   
+            <input type="text" name="nom" id="champ-nom"><br>
+            Date de Naissance :
+            <input type="date" name="dateNaissance" id="champ-date" max="2018-05-23"><br>
+            Numero Telephone:
+            <input type="text" name="num" id="champ-num"><br>
+            Adresse email:
+            <input type="email" name="mail" id="champ-mail"><br>
+            Mot de passe:
+            <input type="password" name="mdp" id="champ-mdp"><br>
+            Confirmer le mot de passe:
+            <input type="password" name="mdpConfirmation" id="champ-confirmation"><br>
+            Adresse 1:
+            <input type="text" name="adresse1" id="champ-ad1"><br>
+            Adresse 2:
+            <input type="text" name="adresse2" id="champ-ad2"><br>
+            Code postal:
+            <input type="text" name="zipCode" id="champ-zip"><br>
+            Ville: 
+            <input type="text" name="ville" id="champ-ville"><br>
+            Pays:
+            <input type="text" name="pays" id="champ-pays"><br>
+
+            <button id="bouton-inscription">S'inscrire</button><br>   
+            <button id="bouton-reinitialisation">Reinitialiser</button><br>   
+            <a href="index.html">Accueil</a>
+            <div id="message"></div>
+        </div>
+        <script>
+
+            function inscription() {
+                var champHonorific = $('#civilite').val();
+                var champPrenom = $('#champ-prenom').val();
+                var champNom = $('#champ-nom').val();
+                var champDateNaissance = $('#champ-date').val();
+                var champTelephone = $('#champ-num').val();
+                var champMail = $('#champ-mail').val();
+                var champMotDePasse = $('#champ-mdp').val();
+                var champAdresse1 = $('#champ-ad1').val();
+                var champAdresse2 = $('#champ-ad2').val();
+                var champZipCode = $('#champ-zipCode').val();
+                var champVille = $('#champ-ville').val();
+                var champPays = $('#champ-pays').val();
+                $('#message').html('Inscription en cours...');
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'inscription',
+                        civilite: champHonorific,
+                        firstName: champPrenom,
+                        lastName: champNom,
+                        birthdate: champDateNaissance,
+                        phonenumber: champTelephone,
+                        email: champMail,
+                        password: champMotDePasse,
+                        address1: champAdresse1,
+                        address2: champAdresse2,
+                        zipCode: champZipCode,
+                        city: champVille,
+                        country: champPays
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    var status = JSON.stringify(data.status);
+                    if (status.indexOf("success") > 0) {
+                        alert('Votre inscription a réussi. Vous allez recevoir un mail confirmant votre inscription.');
+                        $('#message').html('Inscription OK!');
+                        window.location = "index.html";
+                    } else if (status.indexOf("fail") > 0) {
+                        alert("Erreur : L'adresse mail saisie est déjà utilisé ou l'adresse n'est pas géolocalisable. Veuillez recommencer !");
+                        $('#message').html("Erreur : L'adresse mail saisie est déjà utilisé ou l'adresse n'est pas géolocalisable. Veuillez recommencer ! ");
+                    }
+
+                }).fail(function () {
+
+                    $('#message').html("Erreur serveur : Echec de l'inscription. Veuillez recommencer ! ");
+                });
+            }
+
+            $(document).ready(function () {
+               // $('#champ-date').prop
+                // ajout d'un "handler" sur le clic du bouton de connexion
+                $('#bouton-inscription').on('click', function () {
+                    var valide = true;
+                    $('input[type="text"],input[type="password"],input[type="date"],input[type="email"]').each(function () {
+                        if ($.trim($(this).val()) == '') {
+                            valide = false;
+                            $(this).css({"border": "1px solid red", "background": "#FFCECE"});
+                        } else $(this).css({"border": "", "background": ""});
+                    });
+                    if ($('#champ-mdp').val() !== $('#champ-confirmation').val()) {
+                        valide = false;
+                        $('#champ-mdp').css({"border": "1px solid red", "background": "#FFCECE"});
+                        $('#champ-confirmation').css({"border": "1px solid red", "background": "#FFCECE"});
+                        alert("Les mots de passe ne correspondent pas.");
+                        $("#message").html("Les mots de passe ne correspondent pas.");
+                    }
+                    if (valide == true)
+                        inscription();
+                });
+            
+
+            $('#bouton-reinitialisation').on('click', function () {
+                $('input[type="text"],input[type="password"],input[type="date"],input[type="email"]').each(function () {
+                    $(this).val('');
+                    $(this).css({"border": "", "background": ""});
+                });
+            });
+            });
+
+        </script>
+    </body>
+</html>

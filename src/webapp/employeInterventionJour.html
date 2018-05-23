@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Service Employe</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+            html, body { height: 100%; margin: 0; padding: 0; }
+            h1 { text-align: center; }
+            #map { height: 80%; width: 50% }
+            #liste { height: 35%; width: 45% ; position: absolute; right:0px; top:5%;}
+        </style>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" href="styles.css">
+        <script type="text/javascript" src="jquery.cookie.js"></script>
+
+        <script>
+            if ($.cookie('user') == undefined)
+                window.location.replace("index.html");
+        </script>
+    </head>
+    <body>
+        <div class="tab">
+            <button id="bouton-futur" onclick="window.location = 'employeFutur.html'">Interventions à effectuer</button>  
+            <button id="bouton-passe" onclick="window.location = 'employeAncienne.html'">Mes anciennes interventions</button>
+            <button id="bouton-present" onclick="window.location = 'employeInterventionJour.html'">Carte de interventions du jour</button>
+        </div>
+        <a href='' id="deconnexion">Se déconnecter</a>
+        <div id="map"></div>
+
+        <div id="espaceMessage"></div>
+        <div id="liste"></div>
+
+        <script type="text/javascript">
+
+            var centerLat = 45.764043;
+            var centerLong = 4.835659;
+            var googleMapInstance = null;
+            var iconImage = {url: './img/red_Marker.png'};
+            var markers = [];
+            var precedentIndex;
+            var precedentIndexMouseover;
+            var detailsOpened = false;
+            var nbInterventions;
+
+            function afficherInterventions() {
+
+                var interventions = arguments[0];
+                nbInterventions = interventions.length;
+                for (var i = 0; i < interventions.length; i++) {
+                    var intervention = interventions[i];
+                    $('#liste').append('<li>' + '<button id=' + i + 'boutonDetails>' + ' Details ' + '</button>   ' + intervention.type + " | " + intervention.date + " | " +
+                            intervention.client + " | " + intervention.statut + " | " + intervention.dateFin + '<br/>' + '<div id="' + i + '"></div>'
+                            );
+                    $('#' + i + 'boutonDetails').css({"background-color": "#3d3d5c", "border": "none", "height": "30px", "color": "white"});
+
+                    if (intervention.type.indexOf("Livraison") >= 0) {
+                        $('#' + i).append('Objet: ' + intervention.objet + '<br/>' + 'Entreprise: ' + intervention.entreprise + '<br/>');
+                    } else if (intervention.type.indexOf("Animal") >= 0) {
+                        $('#' + i).append('Animal: ' + intervention.animal + '<br/>');
+                    }
+
+                    $('#' + i).append('Description: ' + intervention.description);
+                    $('#' + i).hide();
+                    $('#' + i).addClass('cacheDetails');
+                    $('#liste').append('</li>');
+
+                    $('#' + i + 'boutonDetails').on('click', function () {
+                        var idDiv = (this.id.toString()).substr(0, 1);
+                        $('#' + idDiv).removeClass('cacheDetails');
+                        $('.cacheDetails').hide();
+                        $('#' + idDiv).toggle();
+                        $('#' + idDiv).addClass('cacheDetails');
+                        if ($('#' + idDiv).is(":visible"))
+                            detailsOpened = true;
+                        else
+                            detailsOpened = false;
+                    });
+                }
+
+                $('li').on('click', function () {
+                    $('li').removeClass("active");
+                    $(this).addClass("active");
+                    var index = $(this).index();
+
+                    googleMapInstance.setCenter({lat: interventions[index].lat, lng: interventions[index].long});
+                    if (precedentIndex != null /*&& !((markers[precedentIndex].getPosition()).equals(markers[index].getPosition()))*/) {
+                        markers[precedentIndex].setIcon({url: './img/red_Marker.png'});
+                    }
+
+                    markers[index].setIcon({url: './img/green_Marker.png'});
+                    precedentIndex = index;
+                });
+            }
+
+
+            function geolocaliserInterventions() {
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        action: 'interventionsEmployeJour',
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    var status = JSON.stringify(data.status);
+                    //recuperation des coordonnees de l'employe
+                    centerLat = data.coordEmploye.latEmp;
+                    centerLong = data.coordEmploye.longEmp;
+                    googleMapInstance = new google.maps.Map(document.getElementById('map'), {
+                        center: {lat: centerLat, lng: centerLong},
+                        zoom: 13
+                    });
+                    var marker = new google.maps.Marker({
+                        map: googleMapInstance,
+                        position: {lat: centerLat, lng: centerLong},
+                        title: "Vous etes ici !",
+                        icon: {url: './img/blue_MarkerO.png'}
+                    });
+                    if (status.indexOf("success") >= 0) {
+                        //recuperation des coordonnees des interventions du jour
+                        var interventions = data.interventionsJour;
+
+                        afficherInterventions(interventions);
+                        for (var i = 0; i < interventions.length; i++) {
+                            var latitude = interventions[i].lat;
+                            var longitude = interventions[i].long;
+                            var infowindow = makeInfoWindow('');
+                            var marker = new google.maps.Marker({
+                                map: googleMapInstance,
+                                position: {lat: latitude, lng: longitude},
+                                title: 'Endroit #' + i,
+                                icon: iconImage
+                            });
+                            markers[i] = marker;
+
+                            //mise en valeur de l'intervention survolée
+                            markers[i].addListener('mouseover', function () {
+                                //change la couleur de marker
+                                var index = markers.indexOf(this);
+                                if (this.getIcon().url === "./img/red_Marker.png")
+                                    markers[index].setIcon({url: './img/blue_Marker.png'});
+                                //centre l'élément de la liste
+                                $("li").removeClass("activeScroll");
+                                var listItem = ($("li").eq(index));
+                                listItem.addClass("activeScroll");
+                                var diff = -($("#liste").height()) / 2 + listItem.offset().top;
+
+                                if (detailsOpened === false)
+                                    $("#liste").animate({scrollTop: listItem.offset().top})
+                            });
+
+                            //revient à la couleur initialle
+                            markers[i].addListener("mouseout", function () {
+                                $("li").removeClass("activeScroll");
+                                if (this.getIcon().url === "./img/blue_Marker.png")
+                                    this.setIcon({url: './img/red_Marker.png'});
+                            });
+
+                            //afichage des détails d'une intervention sur click sur le marker
+                            markers[i].addListener('click', function () {
+                                var index = markers.indexOf(this);
+                                if (precedentIndex != null)
+                                    markers[precedentIndex].setIcon({url: './img/red_Marker.png'});
+                                markers[index].setIcon({url: './img/green_Marker.png'});
+                                $("li").removeClass("active");
+                                var listItem = ($("li").eq(index));
+                                listItem.removeClass("activeScroll");
+                                listItem.addClass("active");
+                                //centre l'intervention dans la liste
+                                var diff = -($("#liste").height()) / 2 + listItem.offset().top;
+                                $("#liste").animate({scrollTop: listItem.offset().top})
+
+                                // ferme les détails des autres interventions
+                                $('#' + index).removeClass('cacheDetails');
+                                $('.cacheDetails').hide();
+                                $('#' + index).toggle();
+                                $('#' + index).addClass('cacheDetails');
+                                if ($('#' + index).is(":visible"))
+                                    detailsOpened = true
+                                else
+                                    detailsOpened = false;
+                                precedentIndex = index;
+                            });
+                        }
+
+                    } else if (status.indexOf("fail") >= 0) {
+                        $('#espaceMessage').css({"visibility": "visible"});
+                        $('#espaceMessage').html("Il n'y a pas encore de demandes d'intervention pour aujourd'hui.");
+                        $('#liste').css({"visibility": "hidden"});
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+            }
+
+            function makeInfoWindow(title) {
+                return new google.maps.InfoWindow({
+                    content: '<div>Information: ' + title + '</div>'
+                });
+            }
+            function attachInfoWindow(marker, infowindow, htmlDescription) {
+                marker.addListener('click', function () {
+                    infowindow.setContent(htmlDescription);
+                    infowindow.open(googleMapInstance, this);
+                });
+            }
+            function initMap() {
+                geolocaliserInterventions();
+            }
+
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAklw96N9rLd93ubr-F04CN7qi2ryKayAc&callback=initMap">
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#deconnexion').on('click', function () {
+                    $.removeCookie('user');
+                    window.location = "index.html";
+                });
+
+            });
+        </script>
+
+
+    </body>
+</html>

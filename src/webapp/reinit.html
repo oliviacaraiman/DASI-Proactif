@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Réinitialisation du mot de passe</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="jquery.cookie.js"></script>
+
+    </head>
+    <body>
+        <div class="reinit">
+            <img src="img/logo.PNG" alt="logo" id="logo" height="120" width ="150"><br>
+            Adresse e-mail : <input type="email" id="champ-adresse" name="adress" /><br>
+            <button id="bouton-reinit">Réinitialiser le mot de passe</button><br>
+            <a href="index.html">Connexion</a>
+            <div id="message"></div>
+        </div>
+        <script>
+            
+            function reinitialisation() {
+                var champAdress = $('#champ-adresse').val();
+                $('#message').html('Reinitialisation en cours...');
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        action: 'reinitialisation',
+                        mail: champAdress
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    var status = JSON.stringify(data.status);
+
+                    if (status.indexOf("success") >= 0) {
+                        alert("Un nouvel mot de passe a été envoyé sur votre adresse mail.");
+                        window.location = "index.html";
+                    } else if (status.indexOf("fail") >= 0) {
+                        alert("Erreur : Adresse mail incorrecte! Veuillez recommencer.");
+                        $('#message').html('Erreur : Adresse mail incorrecte! Veuillez recommencer. ');
+                    }
+                }).fail(function () {
+                    $('#message').html('Erreur serveur: Veuillez recommencer. ');
+                });
+            }
+
+            $(document).ready(function () {
+                $('#bouton-reinit').on('click', function () {
+                    var valide = true;
+                    $('input[type="email"]').each(function () {
+                        if ($.trim($(this).val()) == '') {
+                            valide = false;
+                            $(this).css({"border": "1px solid red", "background": "#FFCECE"});
+                        }
+                    });
+                    if (valide == true)
+                        reinitialisation();
+                });
+            });
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Service Employe</title>
+       <meta charset="UTF-8">
+        <link rel="stylesheet" href="styles.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="jquery.cookie.js"></script>
+        
+        <script>
+            if ($.cookie('user') == undefined)
+                window.location.replace("index.html");
+
+        </script>
+    </head>
+    <body>
+        <div class="tab">
+            <button id="bouton-futur" onclick="window.location = 'employeFutur.html'">Interventions à effectuer</button>  
+            <button id="bouton-passe" onclick="window.location = 'employeAncienne.html'">Mes anciennes interventions</button>
+            <button id="bouton-present" onclick="window.location = 'employeInterventionJour.html'">Carte de interventions du jour</button>
+        </div>
+        <a href='' id="deconnexion">Se déconnecter</a>
+        <div id='intervention'></div>
+        <div id="message"></div>
+
+        <div id='Attestation'>
+            <h3>Attestation de fin d'intervention</h3>
+            <table>
+                <td><h3>    Statut*    </h3>
+                    <form>
+                        <select name="statut" id="statut">
+                            <option>Echec
+                            <option>Succes
+                        </select>
+                    </form>
+                </td>
+
+                <td> 
+                    <!--Afficher la date par défaut, Changer méthode de selection-->
+                    <label for="dateFin">Date de Fin: </label> 
+                    <input type='date' name="dateFin" id="champ-date"><br>
+                    <label for="heureFin">Heure de Fin: </label> 
+                    <input type='time' name="heureFin" id="champ-heure"></td>
+
+
+            </table>
+            <h3>Commentaire</h3>
+            <textarea name="textarea" id="description" rows="10" cols="50" ></textarea><br/>
+            <button id="bouton-annuler">  Annuler  </button>
+            <button id="bouton-envoyer">  Envoyer  </button>
+        </div>
+
+        <script>
+
+        var interventionId;
+        
+            function envoyerIntervention() {
+                var statut = $('#statut').val();
+                var date = $('#champ-date').val();
+                var heure = $('#champ-heure').val();
+                var commentaire = $('#description').val();
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'completerAttestation',
+                        statut: statut,
+                        date: date,
+                        heure: heure,
+                        commentaire: commentaire
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    $('input[type="text"],input[type="password"],textarea').each(function () {
+                        $(this).val('');
+                    });
+                    $('#Attestation').hide();
+                    var status = JSON.stringify(data.status);
+                    if (status.indexOf("success") >= 0) {
+                        alert("Votre résultat a été pris en compte.");
+                        ajouterIntervention();
+
+                    } else if (status.indexOf("fail") >= 0) {
+                        alert("Erreur. Veuillez reesayer.");
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. ");
+                });
+
+
+            }
+            function ajouterIntervention() {
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        action: 'interventionEmploye',
+                    },
+                    dataType: 'json'
+                }).done(function (data) {
+                    $('#intervention').empty();
+                    var status = JSON.stringify(data.statusInterventions);
+
+                    if (status.indexOf("success") >= 0) {
+                        var intervention = data.intervention;
+                        interventionId = intervention.id;
+                            $('#intervention').append('<button id=boutonDetails>' + '+' + '</button>   ' + intervention.type + " | " + intervention.date + " | " +
+                                    intervention.client + '<br/>' + '<div id="details"></div>' +'<button id=bouton-finirIntervention>' + 'Finir' + '</button>');
+                            $('#details').hide();
+                           
+                                if (intervention.type.indexOf("Livraison") >= 0) {
+                                    $('#details').append('Objet: ' + intervention.objet + '<br/>' + 'Entreprise: ' + intervention.entreprise + '<br/>');
+                                } else if (intervention.type.indexOf("Animal") >= 0) {
+                                    $('#details').append('Animal: ' + intervention.animal + '<br/>');
+                                }
+
+                                $('#details').append('Description: ' + intervention.description + '</li>');
+                        $('#boutonDetails').on('click', function () {
+                            $('#details').toggle();
+                        });
+                        $('#bouton-finirIntervention').on('click', function () {
+                            $('#Attestation').toggle();
+                        });
+                    } else if (status.indexOf("fail") >= 0) {
+                        $('#message').html("Vous n'avez pas encore effectué d'intervention.");
+                    }
+                }).fail(function () {
+                    alert("Erreur serveur. Veuillez recommencer.");
+                });
+            }
+
+
+            $(document).ready(function () {
+                $('#Attestation').hide();
+                ajouterIntervention();
+                //par défaut la date d'aujoud'hui                
+                var now = new Date();
+                var day = ("0" + now.getDate()).slice(-2);
+                var month = ("0" + (now.getMonth() + 1)).slice(-2);
+                var today = (day)+"/"+(month)+"/"+now.getFullYear();
+                $('#champ-date').val(today);
+                
+                $('#bouton-annuler').on('click', function () {  
+                    $('input[type="text"],input[type="password"],textarea').each(function () {
+                    $(this).val('');
+                    });
+                    $('#Attestation').hide();
+                });
+                $('#bouton-envoyer').on('click', function () {
+                    $('#message').html("Envoi en cours...");
+                    var valide = true;
+                    $('input[type="text"],input[type="password"],textarea').each(function () {
+                        if ($.trim($(this).val()) == '') {
+                            valide = false;
+                            $(this).css({
+                                "border": "1px solid red",
+                                "background": "#FFCECE"
+                            });
+                        } else {
+                            $(this).css({
+                                "border": "",
+                                "background": ""
+                            });
+                        }
+                    });
+                    if (valide != false)
+                         envoyerIntervention();
+                });
+                  
+                $('#deconnexion').on('click', function () {
+                    $.removeCookie('user');
+                    window.location = "index.html";
+                });
+
+            });
+        </script>
+
+    </body>
+</html>
